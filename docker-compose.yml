@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  # 프론트엔드 (Next.js)
+  client:
+    image: node:22-alpine
+    working_dir: /app
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+    command: sh -c "npm install && npm run dev"
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+
+  # 백엔드 (Express + Mediasoup)
+  server:
+    image: node:22
+    working_dir: /app
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+    command: sh -c "npm install && npx nodemon index.js"
+    ports:
+      - "3001:3001"
+      # Mediasoup용 UDP 포트 개방 (나중에 중요함)
+      - "20000-20100:20000-20100/udp"
+    environment:
+      - NODE_ENV=development
