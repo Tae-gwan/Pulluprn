@@ -1,0 +1,45 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch: # 수동 실행도 가능하도록
+
+jobs:
+  deploy:
+    name: Deploy to EC2 Server
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Deploy to EC2 via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: ${{ secrets.EC2_PORT || 22 }}
+          script: |
+            echo "🚀 배포 시작..."
+            
+            # 프로젝트 디렉토리로 이동 (실제 경로로 변경 필요)
+            cd ${{ secrets.EC2_PROJECT_PATH || '~/pulluprn' }}
+            
+            # Git에서 최신 코드 가져오기
+            echo "📥 Git pull..."
+            git fetch origin
+            git reset --hard origin/main
+            git pull origin main
+            
+            # Docker Compose로 재시작
+            echo "🔄 Docker Compose 재시작..."
+            docker-compose down
+            docker-compose build --no-cache
+            docker-compose up -d
+            
+            # 컨테이너 상태 확인
+            echo "✅ 배포 완료! 컨테이너 상태:"
+            docker-compose ps
+            
+            # 최근 로그 확인 (에러 체크용)
+            echo "📋 최근 로그:"
+            docker-compose logs --tail=50
