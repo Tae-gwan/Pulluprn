@@ -1,23 +1,121 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import React from 'react';
+import { useSessionContext } from "@/context/SessionContext";
+import styles from './page.module.css';
+
+import { useRouter } from "next/navigation";
+
+export default function LandingPage() {
+  const { status } = useSessionContext();
+  const router = useRouter();
+  const [email, setEmail] = React.useState("");
+  const [submissionStatus, setSubmissionStatus] = React.useState<"idle" | "loading" | "success" | "error">("idle");
+  const [message, setMessage] = React.useState("");
+  const [isAccessGranted, setIsAccessGranted] = React.useState(false);
+
+  const isLoading = status === "loading";
+
+  // 로딩 중일 때만 아무것도 표시하지 않음
+  if (isLoading) {
+    return null;
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) return;
+
+    // [SECRET CODE CHECK - Server Side]
+    try {
+      const verifyRes = await fetch("/api/verify-code", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: email }),
+      });
+      const verifyData = await verifyRes.json();
+
+      if (verifyData.valid) {
+        setIsAccessGranted(true);
+        setMessage("Access Granted! Welcome.");
+        setSubmissionStatus("success");
+        return;
+      }
+    } catch (e) {
+      // 검증 에러 시 Waitlist 로직으로 계속 진행
+    }
+
+    setSubmissionStatus("loading");
+    setMessage("");
+
+    try {
+      const res = await fetch("/api/waitlist", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        setSubmissionStatus("success");
+        setMessage(data.message);
+        setEmail("");
+      } else {
+        setSubmissionStatus("error");
+        setMessage(data.message || "오류가 발생했습니다.");
+      }
+    } catch (error) {
+      setSubmissionStatus("error");
+      setMessage("서버 연결에 실패했습니다.");
+    }
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-          Update Test
-          </h1>
+    <div className={styles.main}>
+      <h1 className={styles.title}>PULLUPRN</h1>
+      <p className={styles.subtitle}>Browse the web together, face to face, from anywhere</p>
+
+      {/* ACCESS GRANTED: Show Login/Signup Buttons */}
+      {isAccessGranted ? (
+        <div className={styles.form}>
+          <p className={styles.subtitle} style={{ marginBottom: '1rem', color: '#ff703c' }}>
+            Access Granted
+          </p>
+          <button
+            className={styles.button}
+            onClick={() => router.push("/user/signup")}
+          >
+            Enter Service (Login / Sign Up)
+          </button>
         </div>
-      </main>
+      ) : (
+        <form className={styles.form} onSubmit={handleSubmit}>
+          {(submissionStatus === "idle" || submissionStatus === "error") && (
+            <>
+              <input
+                type="email"
+                className={styles.input}
+                placeholder="Enter your email for updates"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+              <button
+                type="submit"
+                className={styles.button}
+              >
+                Join the Waitlist
+              </button>
+            </>
+          )}
+
+          {message && (
+            <p className={`${styles.message} ${submissionStatus === "success" ? styles.success : styles.error}`}>
+              {message}
+            </p>
+          )}
+        </form>
+      )}
     </div>
   );
 }

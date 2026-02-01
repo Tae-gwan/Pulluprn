@@ -1,0 +1,167 @@
+// 1. 설정
+generator client {
+  provider = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// 2. 사용자 (User)
+// : 로그인한 유저의 핵심 정보가 저장됨
+model User {
+  id            String    @id @default(uuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?   // 구글 프로필 사진
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // [확장성 핵심] 유저가 연결한 소셜 계정들 (구글, 깃허브 등)
+  accounts      Account[]
+  
+  // 로그인 세션 관리
+  sessions      Session[]
+
+  // [친구 기능]
+  sentRequests     Friendship[] @relation("sender")
+  receivedRequests Friendship[] @relation("receiver")
+
+  // [메시지 기능]
+  sentMessages     Message[]    @relation("sender")
+  receivedMessages Message[]    @relation("receiver")
+  chatRoomsAsUser1 ChatRoom[]   @relation("user1")
+  chatRoomsAsUser2 ChatRoom[]   @relation("user2")
+}
+
+// 3. 계정 (Account) - ★ 확장의 핵심 ★
+// : "이 유저는 구글로 로그인함", "이 유저는 깃허브로 로그인함" 같은 정보가 쌓임
+// 나중에 깃허브를 추가하면 코드 수정 없이 이 테이블에 데이터만 쌓으면 됨
+model Account {
+  id                 String  @id @default(uuid())
+  userId             String
+  type               String
+  provider           String  // 예: "google", "github"
+  providerAccountId  String  // 구글이 주는 고유 ID
+  refresh_token      String? @db.Text
+  access_token       String? @db.Text
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String? @db.Text
+  session_state      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+// 4. 세션 (Session)
+// : 로그인 유지 기간 등을 관리
+model Session {
+  id           String   @id @default(uuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// 5. 인증 토큰 (VerificationToken)
+// : 나중에 "이메일로 로그인(Magic Link)" 기능을 추가하거나 비밀번호 찾기 할 때 필요
+// 지금 안 써도 남겨두는 게 확장에 좋음
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// 6. 친구 관계 (Friendship)
+// : 친구 요청 및 상태 관리
+model Friendship {
+  id        String   @id @default(uuid())
+  
+  senderId  String
+  sender    User     @relation("sender", fields: [senderId], references: [id])
+  
+  receiverId String
+  receiver   User    @relation("receiver", fields: [receiverId], references: [id])
+  
+  status    FriendStatus @default(PENDING) // 기본값: 대기중
+  createdAt DateTime @default(now())
+
+  // A가 B에게 중복으로 요청 보낼 수 없도록 방지
+  @@unique([senderId, receiverId])
+}
+
+enum FriendStatus {
+  PENDING  // 요청 보냄 (수락 대기)
+  ACCEPTED // 친구 됨
+  DECLINED // 거절함
+}
+
+// 7. 채팅방 (ChatRoom)
+// : 두 사용자 간의 대화방
+model ChatRoom {
+  id        String   @id @default(uuid())
+  
+  // 대화방에 참여하는 두 사용자 (순서 무관)
+  user1Id   String
+  user1     User     @relation("user1", fields: [user1Id], references: [id], onDelete: Cascade)
+  
+  user2Id   String
+  user2     User     @relation("user2", fields: [user2Id], references: [id], onDelete: Cascade)
+  
+  // 이 대화방의 메시지들
+  messages  Message[]
+  
+  // 마지막 메시지 시간 (대화 목록 정렬용)
+  lastMessageAt DateTime?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // 두 사용자 간에는 하나의 대화방만 존재하도록 제약
+  @@unique([user1Id, user2Id])
+  @@index([user1Id])
+  @@index([user2Id])
+}
+
+// 8. 메시지 (Message)
+// : 실제 채팅 메시지 내용
+model Message {
+  id        String   @id @default(uuid())
+  
+  // 메시지를 보낸 사람
+  senderId  String
+  sender    User     @relation("sender", fields: [senderId], references: [id], onDelete: Cascade)
+  
+  // 메시지를 받은 사람
+  receiverId String
+  receiver   User     @relation("receiver", fields: [receiverId], references: [id], onDelete: Cascade)
+  
+  // 메시지 내용
+  text      String   @db.Text
+  
+  // 메시지가 속한 채팅방
+  chatRoomId String
+  chatRoom   ChatRoom @relation(fields: [chatRoomId], references: [id], onDelete: Cascade)
+  
+  // 메시지 전송 시간
+  createdAt DateTime @default(now())
+
+  @@index([chatRoomId, createdAt]) // 채팅방별 메시지 조회 최적화
+  @@index([senderId, receiverId])  // 사용자별 메시지 조회 최적화
+}
+
+// 9. 대기 명단 (Waitlist) [NEW]
+// : 랜딩 페이지에서 대기 명단에 등록한 이메일들
+model Waitlist {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
+}

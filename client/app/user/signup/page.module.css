@@ -1,0 +1,144 @@
+.container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ECECEC;
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.card {
+  background: #ECECEC;
+  border-radius: 24px;
+  padding: 48px 40px;
+  box-shadow: 
+    12px 12px 24px rgba(163, 163, 163, 0.6),
+    -12px -12px 24px rgba(255, 255, 255, 0.8);
+  width: 100%;
+  max-width: 420px;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #333;
+  margin: 0 0 8px 0;
+  text-shadow: 
+    4px 4px 8px rgba(163, 163, 163, 0.5),
+    -4px -4px 8px rgba(255, 255, 255, 0.7);
+}
+
+.subtitle {
+  font-size: 16px;
+  color: #666;
+  margin: 0 0 32px 0;
+  text-shadow: 
+    2px 2px 4px rgba(163, 163, 163, 0.4),
+    -2px -2px 4px rgba(255, 255, 255, 0.6);
+}
+
+.googleButton {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 14px 24px;
+  background: #ECECEC;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 24px;
+  box-shadow: 
+    6px 6px 12px rgba(163, 163, 163, 0.6),
+    -6px -6px 12px rgba(255, 255, 255, 0.9),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.3);
+}
+
+.googleButton:hover {
+  box-shadow: 
+    8px 8px 16px rgba(163, 163, 163, 0.6),
+    -8px -8px 16px rgba(255, 255, 255, 0.9),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+  transform: translateY(-1px);
+}
+
+.googleButton:active {
+  box-shadow: 
+    inset 2px 2px 4px rgba(163, 163, 163, 0.6),
+    inset -2px -2px 4px rgba(255, 255, 255, 0.8);
+  transform: translateY(1px);
+}
+
+.googleIcon {
+  flex-shrink: 0;
+}
+
+.divider {
+  position: relative;
+  margin: 24px 0;
+  text-align: center;
+}
+
+.divider::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(163, 163, 163, 0.3),
+    rgba(163, 163, 163, 0.3),
+    transparent
+  );
+}
+
+.divider span {
+  position: relative;
+  background: #ECECEC;
+  padding: 0 16px;
+  color: #999;
+  font-size: 14px;
+  text-shadow: 
+    1px 1px 2px rgba(163, 163, 163, 0.4),
+    -1px -1px 2px rgba(255, 255, 255, 0.6);
+}
+
+.footer {
+  margin-top: 24px;
+  font-size: 14px;
+  color: #666;
+  text-shadow: 
+    1px 1px 2px rgba(163, 163, 163, 0.4),
+    -1px -1px 2px rgba(255, 255, 255, 0.6);
+}
+
+.link {
+  color: #FF6B35;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  text-shadow: 
+    1px 1px 2px rgba(163, 163, 163, 0.4),
+    -1px -1px 2px rgba(255, 255, 255, 0.6);
+}
+
+.link:hover {
+  color: #ff8c5a;
+  text-shadow: 
+    2px 2px 4px rgba(163, 163, 163, 0.5),
+    -2px -2px 4px rgba(255, 255, 255, 0.7);
+}
+

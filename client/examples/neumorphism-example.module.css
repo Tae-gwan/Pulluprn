@@ -1,0 +1,295 @@
+/* 뉴모피즘 스타일 예제 */
+
+/* 기본 배경색 (라이트 그레이) */
+.container {
+  background-color: #ECECEC;
+  min-height: 100vh;
+  padding: 40px;
+}
+
+/* 1. 양각 효과 (Raised/Embossed) - 버튼이 튀어나온 느낌 */
+.raisedButton {
+  background: #ECECEC;
+  border: none;
+  border-radius: 20px;
+  padding: 16px 32px;
+  box-shadow: 
+    8px 8px 16px rgba(163, 163, 163, 0.6),  /* 어두운 그림자 (오른쪽 아래) */
+    -8px -8px 16px rgba(255, 255, 255, 0.8); /* 밝은 그림자 (왼쪽 위) */
+  color: #333;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.raisedButton:hover {
+  box-shadow: 
+    4px 4px 8px rgba(163, 163, 163, 0.6),
+    -4px -4px 8px rgba(255, 255, 255, 0.8);
+}
+
+.raisedButton:active {
+  box-shadow: 
+    inset 4px 4px 8px rgba(163, 163, 163, 0.6),
+    inset -4px -4px 8px rgba(255, 255, 255, 0.8);
+}
+
+/* 2. 음각 효과 (Pressed/Inset) - 버튼이 눌린 느낌 */
+.pressedButton {
+  background: #ECECEC;
+  border: none;
+  border-radius: 20px;
+  padding: 16px 32px;
+  box-shadow: 
+    inset 8px 8px 16px rgba(163, 163, 163, 0.6),  /* 안쪽 어두운 그림자 */
+    inset -8px -8px 16px rgba(255, 255, 255, 0.8); /* 안쪽 밝은 그림자 */
+  color: #333;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* 3. 오렌지 악센트 버튼 */
+.orangeButton {
+  background: #FF6B35; /* 오렌지 색상 */
+  border: none;
+  border-radius: 20px;
+  padding: 16px 32px;
+  box-shadow: 
+    8px 8px 16px rgba(163, 163, 163, 0.6),
+    -8px -8px 16px rgba(255, 255, 255, 0.8);
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.orangeButton:hover {
+  box-shadow: 
+    4px 4px 8px rgba(163, 163, 163, 0.6),
+    -4px -4px 8px rgba(255, 255, 255, 0.8);
+  transform: translateY(2px);
+}
+
+.orangeButton:active {
+  box-shadow: 
+    inset 4px 4px 8px rgba(0, 0, 0, 0.2),
+    inset -4px -4px 8px rgba(255, 255, 255, 0.2);
+}
+
+/* 4. 토글 스위치 */
+.toggleSwitch {
+  position: relative;
+  width: 60px;
+  height: 30px;
+  background: #ECECEC;
+  border-radius: 15px;
+  box-shadow: 
+    inset 4px 4px 8px rgba(163, 163, 163, 0.6),
+    inset -4px -4px 8px rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.toggleSwitch.active {
+  background: #FF6B35;
+  box-shadow: 
+    4px 4px 8px rgba(163, 163, 163, 0.6),
+    -4px -4px 8px rgba(255, 255, 255, 0.8);
+}
+
+.toggleSwitch::after {
+  content: '';
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: white;
+  top: 3px;
+  left: 3px;
+  box-shadow: 
+    2px 2px 4px rgba(163, 163, 163, 0.6),
+    -2px -2px 4px rgba(255, 255, 255, 0.8);
+  transition: all 0.3s ease;
+}
+
+.toggleSwitch.active::after {
+  left: 33px;
+}
+
+/* 5. 체크박스 */
+.checkbox {
+  width: 24px;
+  height: 24px;
+  background: #ECECEC;
+  border-radius: 6px;
+  box-shadow: 
+    inset 3px 3px 6px rgba(163, 163, 163, 0.6),
+    inset -3px -3px 6px rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.checkbox.checked {
+  background: #FF6B35;
+  box-shadow: 
+    3px 3px 6px rgba(163, 163, 163, 0.6),
+    -3px -3px 6px rgba(255, 255, 255, 0.8);
+}
+
+.checkbox.checked::after {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+/* 6. 입력 필드 */
+.inputField {
+  background: #ECECEC;
+  border: none;
+  border-radius: 15px;
+  padding: 12px 20px;
+  box-shadow: 
+    inset 4px 4px 8px rgba(163, 163, 163, 0.6),
+    inset -4px -4px 8px rgba(255, 255, 255, 0.8);
+  color: #333;
+  font-size: 16px;
+  outline: none;
+  width: 100%;
+  max-width: 300px;
+}
+
+.inputField:focus {
+  box-shadow: 
+    inset 2px 2px 4px rgba(163, 163, 163, 0.6),
+    inset -2px -2px 4px rgba(255, 255, 255, 0.8);
+}
+
+/* 7. 슬라이더 */
+.sliderContainer {
+  position: relative;
+  width: 100%;
+  max-width: 300px;
+  height: 8px;
+  background: #ECECEC;
+  border-radius: 4px;
+  box-shadow: 
+    inset 2px 2px 4px rgba(163, 163, 163, 0.6),
+    inset -2px -2px 4px rgba(255, 255, 255, 0.8);
+}
+
+.sliderTrack {
+  position: absolute;
+  height: 100%;
+  background: #FF6B35;
+  border-radius: 4px;
+  box-shadow: 
+    2px 2px 4px rgba(163, 163, 163, 0.6),
+    -2px -2px 4px rgba(255, 255, 255, 0.8);
+}
+
+.sliderThumb {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: #FF6B35;
+  border-radius: 50%;
+  top: 50%;
+  transform: translateY(-50%);
+  box-shadow: 
+    4px 4px 8px rgba(163, 163, 163, 0.6),
+    -4px -4px 8px rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+}
+
+.sliderThumb:hover {
+  box-shadow: 
+    2px 2px 4px rgba(163, 163, 163, 0.6),
+    -2px -2px 4px rgba(255, 255, 255, 0.8);
+}
+
+/* 8. 카드/컨테이너 */
+.card {
+  background: #ECECEC;
+  border-radius: 24px;
+  padding: 32px;
+  box-shadow: 
+    12px 12px 24px rgba(163, 163, 163, 0.6),
+    -12px -12px 24px rgba(255, 255, 255, 0.8);
+}
+
+/* 9. 세그먼트 버튼 */
+.segmentContainer {
+  display: flex;
+  background: #ECECEC;
+  border-radius: 12px;
+  padding: 4px;
+  box-shadow: 
+    inset 4px 4px 8px rgba(163, 163, 163, 0.6),
+    inset -4px -4px 8px rgba(255, 255, 255, 0.8);
+  gap: 4px;
+}
+
+.segmentButton {
+  flex: 1;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  color: #666;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.segmentButton.active {
+  background: #FF6B35;
+  color: white;
+  box-shadow: 
+    2px 2px 4px rgba(163, 163, 163, 0.6),
+    -2px -2px 4px rgba(255, 255, 255, 0.8);
+}
+
+/* 10. 원형 다이얼/노브 */
+.circularDial {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: #ECECEC;
+  box-shadow: 
+    8px 8px 16px rgba(163, 163, 163, 0.6),
+    -8px -8px 16px rgba(255, 255, 255, 0.8);
+  position: relative;
+  cursor: pointer;
+}
+
+.circularDial::after {
+  content: '';
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: white;
+  border-radius: 50%;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  box-shadow: 
+    2px 2px 4px rgba(163, 163, 163, 0.6),
+    -2px -2px 4px rgba(255, 255, 255, 0.8);
+}
+
+/* 반응형 조정 */
+@media (max-width: 768px) {
+  .container {
+    padding: 20px;
+  }
+  
+  .card {
+    padding: 20px;
+  }
+}

@@ -1,0 +1,121 @@
+/* CSS 변수 정의 */
+:root {
+  --modal-text-color: #333;
+  --modal-accent-color: #FF6B35;
+}
+
+/* 간단한 친구 아이템 (프로필 사진 + 이름만) */
+.simpleFriendItem {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  margin: 0.25rem 0;
+  border-radius: 50px;
+  transition: all 0.2s;
+  cursor: pointer;
+  background: #ECECEC;
+  box-shadow:
+    2px 2px 4px rgba(163, 163, 163, 0.4),
+    -2px -2px 4px rgba(255, 255, 255, 0.6);
+}
+
+.simpleFriendItem:hover {
+  background: #ededed;
+}
+
+.simpleFriendName {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--modal-text-color);
+  flex: 1;
+}
+
+.actionButtons {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.friendAvatar {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+}
+
+.friendAvatar img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow:
+    2px 2px 4px rgba(163, 163, 163, 0.243),
+    -2px -2px 4px rgba(255, 255, 255, 0.321);
+}
+
+.avatarPlaceholder {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: #ECECEC;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FF6B35;
+  font-weight: 600;
+  font-size: 1.25rem;
+  box-shadow:
+    2px 2px 4px rgba(163, 163, 163, 0.5),
+    -2px -2px 4px rgba(255, 255, 255, 0.7);
+}
+
+.onlineIndicator {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 12px;
+  height: 12px;
+  background-color: #10b981;
+  border: 2px solid white;
+  border-radius: 50%;
+}
+
+.messageButton,
+.callButton {
+  padding: 0.5rem;
+  background: #ECECEC;
+  border: none;
+  border-radius: 50px;
+  color: var(--modal-accent-color);
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow:
+    2px 2px 4px rgba(163, 163, 163, 0.5),
+    -2px -2px 4px rgba(255, 255, 255, 0.7);
+}
+
+.messageButton:hover,
+.callButton:hover {
+  box-shadow:
+    inset 2px 2px 4px rgba(163, 163, 163, 0.5),
+    inset -2px -2px 4px rgba(255, 255, 255, 0.7);
+  transform: scale(0.95);
+}
+
+.messageButton svg {
+  width: 25px;
+  height: 25px;
+}
+
+.callButton {
+  color: #2563eb;
+}
+
+.callButton svg {
+  width: 22px;
+  height: 22px;
+}

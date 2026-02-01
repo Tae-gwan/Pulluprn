@@ -1,0 +1,143 @@
+/* 전체 컨테이너: 메인 레이아웃과 동일한 Soft UI 배경 */
+.container {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    overflow: hidden;
+    box-sizing: border-box;
+    background: #ECECEC;
+    /* 메인 테마 배경색 */
+    position: relative;
+    /* 뉴모피즘은 밝은 배경이라 폰트 컬러도 어둡게 */
+    color: #333;
+}
+
+.videoGrid {
+    flex: 1;
+    display: flex;
+    gap: 2rem;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    max-width: 1600px;
+    margin: 0 auto;
+    z-index: 10;
+}
+
+/* 비디오 래퍼: 튀어나온 듯한 뉴모피즘 효과 */
+.videoWrapper {
+    position: relative;
+    border-radius: 24px;
+    overflow: hidden;
+    background: #ECECEC;
+    /* Soft Shadow (튀어나온 효과) */
+    box-shadow:
+        12px 12px 24px rgba(163, 163, 163, 0.3),
+        -12px -12px 24px rgba(255, 255, 255, 0.8);
+    /* 비디오 로딩 전이나 여백이 보일 때를 대비 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* PC 버전: 가로 배치 */
+@media (min-width: 769px) {
+    .videoGrid {
+        flex-direction: row;
+        padding: 2rem;
+    }
+
+    .videoWrapper {
+        height: 100%;
+        max-height: 80vh;
+        aspect-ratio: 16/9;
+        flex: 1;
+    }
+
+    /* 비디오 태그 자체의 둥근 모서리 */
+    .videoWrapper video {
+        border-radius: 16px;
+    }
+}
+
+/* 모바일 버전: 세로 배치 */
+@media (max-width: 768px) {
+    .videoGrid {
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .videoWrapper {
+        width: 100%;
+        flex: 1;
+        min-height: 0;
+        border-radius: 20px;
+        padding: 4px;
+    }
+
+    .videoWrapper video {
+        border-radius: 16px;
+    }
+}
+
+/* 라벨 스타일: 작은 뉴모피즘 배지 */
+.videoLabel {
+    position: absolute;
+    bottom: 1.5rem;
+    left: 1.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #ffffff;
+    z-index: 20;
+
+    /* Glassmorphism Effect */
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+
+.video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.myVideo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scaleX(-1);
+}
+
+.remoteVideo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.loadingBox {
+    margin: auto;
+    color: #888;
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: 500;
+
+    /* 로딩 박스도 뉴모피즘 */
+    padding: 2rem 3rem;
+    border-radius: 24px;
+    background: #ECECEC;
+    box-shadow:
+        8px 8px 16px rgba(163, 163, 163, 0.3),
+        -8px -8px 16px rgba(255, 255, 255, 0.8);
+}

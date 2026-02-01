@@ -1,0 +1,555 @@
+/* CSS 변수 정의 */
+:root {
+  --modal-text-color: #333;
+  --modal-accent-color: #FF6B35;
+}
+
+/* 검색창 컨테이너 */
+.searchContainer {
+  padding: 1rem 1rem;
+  border-bottom: 1px solid rgba(163, 163, 163, 0.2);
+}
+
+/* 컨텐츠 영역 - window 안에 표시 */
+.content {
+  width: 100%;
+  height: 100%;
+  flex: 1;
+  overflow-y: auto;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  background: transparent;
+}
+
+/* 뉴모피즘 스타일 스크롤바 */
+.content::-webkit-scrollbar {
+  width: 10px;
+}
+
+.content::-webkit-scrollbar-track {
+  background: #ECECEC;
+  border-radius: 10px;
+}
+
+.content::-webkit-scrollbar-thumb {
+  background: #ECECEC;
+  border-radius: 10px;
+  box-shadow:
+    inset 2px 2px 4px rgba(163, 163, 163, 0.6),
+    inset -2px -2px 4px rgba(255, 255, 255, 0.8);
+}
+
+.content::-webkit-scrollbar-thumb:hover {
+  box-shadow:
+    inset 1px 1px 2px rgba(163, 163, 163, 0.6),
+    inset -1px -1px 2px rgba(255, 255, 255, 0.8);
+}
+
+/* 검색 입력창 (긴 타원형) */
+.searchInput {
+  width: 100%;
+  height: 30px;
+  padding: 1.25rem 1.25rem;
+  border: none;
+  border-radius: 9999px;
+  font-size: 0.9375rem;
+  outline: none;
+  transition: all 0.2s;
+  background-color: #ECECEC;
+  color: #333;
+  box-shadow:
+    inset 4px 4px 8px rgba(163, 163, 163, 0.6),
+    inset -4px -4px 8px rgba(255, 255, 255, 0.8);
+}
+
+.searchInput:focus {
+  box-shadow:
+    inset 2px 2px 4px rgba(163, 163, 163, 0.6),
+    inset -2px -2px 4px rgba(255, 255, 255, 0.8);
+}
+
+.searchInput::placeholder {
+  color: #999;
+  opacity: 0.6;
+}
+
+/* 아코디언 섹션 */
+.accordionSection {
+  overflow: hidden;
+}
+
+.accordionSection:last-child {
+  border-bottom: none;
+}
+
+.accordionHeader {
+  width: calc(100% - 1rem);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1.5rem;
+  background: #ECECEC;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: left;
+  box-shadow:
+    2px 2px 4px rgba(163, 163, 163, 0.5),
+    -2px -2px 4px rgba(255, 255, 255, 0.7);
+  margin: 0.5rem;
+  border-radius: 12px;
+  box-sizing: border-box;
+}
+
+.accordionHeader:hover {
+  box-shadow:
+    1px 1px 2px rgba(163, 163, 163, 0.5),
+    -1px -1px 2px rgba(255, 255, 255, 0.7);
+}
+
+.accordionHeader.expandedHeader {
+  box-shadow:
+    inset 2px 2px 4px rgba(163, 163, 163, 0.5),
+    inset -2px -2px 4px rgba(255, 255, 255, 0.7);
+  transition: all 0.3s ease;
+}
+
+.accordionTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--modal-accent-color);
+}
+
+.accordionIcon {
+  color: var(--modal-accent-color);
+  font-size: 1rem;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-block;
+  margin-left: 0.5rem;
+}
+
+.accordionIcon.expanded {
+  transform: rotate(90deg);
+}
+
+.accordionContent {
+  max-height: 300px;
+  overflow-y: auto;
+  padding: 0.5rem;
+  background-color: #ECECEC;
+  /* border-bottom: 1px solid rgba(163, 163, 163, 0.2); */
+  animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  margin: 0 0.5rem;
+  border-radius: 12px;
+}
+
+/* 아코디언 콘텐츠 스크롤바 */
+.accordionContent::-webkit-scrollbar {
+  width: 8px;
+}
+
+.accordionContent::-webkit-scrollbar-track {
+  background: #ECECEC;
+  border-radius: 8px;
+}
+
+.accordionContent::-webkit-scrollbar-thumb {
+  background: #ECECEC;
+  border-radius: 8px;
+  box-shadow:
+    inset 2px 2px 4px rgba(163, 163, 163, 0.6),
+    inset -2px -2px 4px rgba(255, 255, 255, 0.8);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-2px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 친구 목록 */
+.friendList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.friendItem {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  transition: background-color 0.2s;
+}
+
+.friendItem:hover {
+  background-color: #f9fafb;
+}
+
+.friendInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.friendName {
+  font-weight: 600;
+  color: var(--modal-text-color);
+  margin-bottom: 0.25rem;
+}
+
+.friendEmail {
+  font-size: 0.875rem;
+  color: var(--modal-text-color);
+  opacity: 0.7;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+/* 검색 결과 */
+.searchResults {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.searchResultItem {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid #e5e7eb;
+  transition: all 0.2s;
+}
+
+.searchResultItem:hover {
+  background-color: #f9fafb;
+  border-color: #d1d5db;
+}
+
+.addButton {
+  margin-left: auto;
+  padding: 0.5rem 1rem;
+  background-color: #FF6B35;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow:
+    4px 4px 8px rgba(163, 163, 163, 0.6),
+    -4px -4px 8px rgba(255, 255, 255, 0.8);
+}
+
+.addButton:hover {
+  box-shadow:
+    2px 2px 4px rgba(163, 163, 163, 0.6),
+    -2px -2px 4px rgba(255, 255, 255, 0.8);
+  transform: translateY(1px);
+}
+
+.addButton:active {
+  box-shadow:
+    inset 2px 2px 4px rgba(0, 0, 0, 0.2),
+    inset -2px -2px 4px rgba(255, 255, 255, 0.2);
+}
+
+/* 요청 액션 버튼 */
+.requestActions {
+  display: flex;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+.acceptButton {
+  padding: 0.5rem 1rem;
+  background-color: #FF6B35;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow:
+    3px 3px 6px rgba(163, 163, 163, 0.6),
+    -3px -3px 6px rgba(255, 255, 255, 0.8);
+}
+
+.acceptButton:hover {
+  box-shadow:
+    2px 2px 4px rgba(163, 163, 163, 0.6),
+    -2px -2px 4px rgba(255, 255, 255, 0.8);
+  transform: translateY(1px);
+}
+
+.acceptButton:active {
+  box-shadow:
+    inset 2px 2px 4px rgba(0, 0, 0, 0.2),
+    inset -2px -2px 4px rgba(255, 255, 255, 0.2);
+}
+
+.declineButton {
+  padding: 0.5rem 1rem;
+  background-color: #ECECEC;
+  color: #666;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow:
+    3px 3px 6px rgba(163, 163, 163, 0.6),
+    -3px -3px 6px rgba(255, 255, 255, 0.8);
+}
+
+.declineButton:hover {
+  box-shadow:
+    inset 2px 2px 4px rgba(163, 163, 163, 0.6),
+    inset -2px -2px 4px rgba(255, 255, 255, 0.8);
+  transform: translateY(1px);
+}
+
+/* 대기중 배지 */
+.pendingBadge {
+  margin-left: auto;
+  padding: 0.375rem 0.75rem;
+  background-color: #ECECEC;
+  color: #FF6B35;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  box-shadow:
+    2px 2px 4px rgba(163, 163, 163, 0.5),
+    -2px -2px 4px rgba(255, 255, 255, 0.7);
+}
+
+/* 빈 상태 */
+.emptyState {
+  text-align: center;
+  color: var(--modal-text-color);
+  opacity: 0.6;
+  padding: 2rem;
+  font-size: 0.875rem;
+}
+
+/* 헤더 */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--modal-accent-color);
+  margin: 0;
+}
+
+.closeButton {
+  background: #ECECEC;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #666;
+  transition: all 0.2s ease;
+  box-shadow:
+    3px 3px 6px rgba(163, 163, 163, 0.6),
+    -3px -3px 6px rgba(255, 255, 255, 0.8);
+}
+
+.closeButton:hover {
+  box-shadow:
+    inset 2px 2px 4px rgba(163, 163, 163, 0.6),
+    inset -2px -2px 4px rgba(255, 255, 255, 0.8);
+  transform: translateY(1px);
+}
+
+.closeButton:active {
+  box-shadow:
+    inset 3px 3px 6px rgba(163, 163, 163, 0.6),
+    inset -3px -3px 6px rgba(255, 255, 255, 0.8);
+  transform: translateY(2px);
+}
+
+
+
+
+/* 검색 섹션 스타일 추가 */
+.searchSection {
+  padding: 0 16px 0px 16px;
+  margin-bottom: 10px;
+}
+
+.searchForm {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.searchButton {
+  background: #FF6B35;
+  border: none;
+  height: 30px;
+  margin: 0.5rem;
+  border-radius: 16px;
+  outline: none;
+  color: #fff;
+  cursor: pointer;
+  min-width: 90px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 0 16px;
+  box-shadow: 
+    4px 4px 8px rgba(163, 163, 163, 0.6),
+    -4px -4px 8px rgba(255, 255, 255, 0.8);
+  transition: all 0.2s ease;
+}
+
+.searchButton:hover {
+  box-shadow: 
+    2px 2px 4px rgba(163, 163, 163, 0.6),
+    -2px -2px 4px rgba(255, 255, 255, 0.8);
+  transform: translateY(0.5px);
+}
+
+.searchButton:active {
+  box-shadow: 
+    inset 2px 2px 2px rgba(0, 0, 0, 0.2),
+    inset -2px -2px 2px rgba(255, 255, 255, 0.2);
+  transform: translateY(1px);
+}
+
+.actionButtons {
+  display: flex;
+  gap: 5px;
+  margin-left: auto;
+}
+
+.statusText {
+  font-size: 12px;
+  color: #888;
+  margin-left: auto;
+}
+
+/* 친구 그리드 컨테이너 (접속 중 / 오프라인) */
+.friendsGridContainer {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* 친구 컬럼 (왼쪽/오른쪽) */
+.friendsColumn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #ECECEC;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow:
+    4px 4px 8px rgba(163, 163, 163, 0.4),
+    -4px -4px 8px rgba(255, 255, 255, 0.6);
+}
+
+/* 컬럼 헤더 */
+.columnHeader {
+  padding: 1rem 1.5rem;
+  background: #ECECEC;
+  border-bottom: 1px solid rgba(163, 163, 163, 0.2);
+}
+
+.columnTitle {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--modal-accent-color);
+  margin: 0;
+}
+
+/* 친구 그리드 컨테이너 (접속 중 / 오프라인) */
+.friendsGridContainer {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* 친구 컬럼 (왼쪽/오른쪽) */
+.friendsColumn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #ECECEC;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow:
+    4px 4px 8px rgba(163, 163, 163, 0.4),
+    -4px -4px 8px rgba(255, 255, 255, 0.6);
+}
+
+/* 컬럼 헤더 */
+.columnHeader {
+  padding: 1rem 1.5rem;
+  background: #ECECEC;
+  border-bottom: 1px solid rgba(163, 163, 163, 0.2);
+}
+
+.columnTitle {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--modal-accent-color);
+  margin: 0;
+}
+
+/* 친구 리스트 */
+.friendsList {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* 친구 리스트 스크롤바 */
+.friendsList::-webkit-scrollbar {
+  width: 8px;
+}
+
+.friendsList::-webkit-scrollbar-track {
+  background: #ECECEC;
+  border-radius: 8px;
+}
+
+.friendsList::-webkit-scrollbar-thumb {
+  background: #ECECEC;
+  border-radius: 8px;
+  box-shadow:
+    inset 2px 2px 4px rgba(163, 163, 163, 0.6),
+    inset -2px -2px 4px rgba(255, 255, 255, 0.8);
+}

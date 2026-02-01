@@ -1,0 +1,150 @@
+.header {
+  width: 100%;
+  background-color: #ECECEC;
+  /* box-shadow: 
+    0 4px 8px rgba(163, 163, 163, 0.4),
+    0 -2px 4px rgba(255, 255, 255, 0.6); */
+  position: fixed;
+  top: 0;
+  z-index: 100;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 2rem;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-shadow: 
+    2px 2px 4px rgba(163, 163, 163, 0.5),
+    -2px -2px 4px rgba(255, 255, 255, 0.7);
+}
+
+.logo:hover {
+  text-shadow: 
+    1px 1px 2px rgba(163, 163, 163, 0.5),
+    -1px -1px 2px rgba(255, 255, 255, 0.7);
+  transform: translateY(-1px);
+}
+
+.nav {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.loginButton {
+  padding: 0.5rem 2rem;
+  background-color: #ECECEC;
+  border: none;
+  border-radius: 12px;
+  color: #333;
+  font-size: 1.3rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 
+    4px 4px 8px rgba(163, 163, 163, 0.6),
+    -4px -4px 8px rgba(255, 255, 255, 0.8);
+}
+
+.loginButton:hover {
+  box-shadow: 
+    2px 2px 4px rgba(163, 163, 163, 0.6),
+    -2px -2px 4px rgba(255, 255, 255, 0.8);
+  transform: translateY(1px);
+}
+
+.loginButton:active {
+  box-shadow: 
+    inset 2px 2px 4px rgba(163, 163, 163, 0.6),
+    inset -2px -2px 4px rgba(255, 255, 255, 0.8);
+}
+
+.signupButton {
+  padding: 0.5rem 2rem;
+  background-color: #ECECEC;
+  border: none;
+  border-radius: 12px;
+  color: #333;
+  font-size: 1.3rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 
+    4px 4px 8px rgba(163, 163, 163, 0.6),
+    -4px -4px 8px rgba(255, 255, 255, 0.8);
+}
+
+.signupButton:hover {
+  box-shadow: 
+    2px 2px 4px rgba(163, 163, 163, 0.6),
+    -2px -2px 4px rgba(255, 255, 255, 0.8);
+  transform: translateY(1px);
+}
+
+.signupButton:active {
+  box-shadow: 
+    inset 2px 2px 4px rgba(163, 163, 163, 0.6),
+    inset -2px -2px 4px rgba(255, 255, 255, 0.8);
+}
+
+.logoutButton {
+  padding: 0.5rem 1.5rem;
+  background-color: #ECECEC;
+  border: none;
+  border-radius: 12px;
+  color: #666;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 
+    3px 3px 6px rgba(163, 163, 163, 0.6),
+    -3px -3px 6px rgba(255, 255, 255, 0.8);
+}
+
+.logoutButton:hover {
+  box-shadow: 
+    inset 2px 2px 4px rgba(163, 163, 163, 0.6),
+    inset -2px -2px 4px rgba(255, 255, 255, 0.8);
+  transform: translateY(1px);
+}
+
+.profileButton {
+  padding: 0.5rem 1.5rem;
+  background-color: #FF6B35;
+  border: none;
+  border-radius: 12px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 
+    4px 4px 8px rgba(163, 163, 163, 0.6),
+    -4px -4px 8px rgba(255, 255, 255, 0.8);
+}
+
+.profileButton:hover {
+  box-shadow: 
+    2px 2px 4px rgba(163, 163, 163, 0.6),
+    -2px -2px 4px rgba(255, 255, 255, 0.8);
+  transform: translateY(1px);
+}
+
+.profileButton:active {
+  box-shadow: 
+    inset 2px 2px 4px rgba(0, 0, 0, 0.2),
+    inset -2px -2px 4px rgba(255, 255, 255, 0.2);
+}
+

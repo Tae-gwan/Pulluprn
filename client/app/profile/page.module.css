@@ -1,0 +1,219 @@
+/* CSS 변수 정의 */
+:root {
+    --modal-text-color: #333;
+    --modal-accent-color: #FF6B35;
+}
+
+/* Profile Content Container - window 안에 표시될 컨테이너 */
+.profileContentContainer {
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    border-radius: 0;
+    box-shadow: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    flex: 1;
+    min-height: 0;
+}
+
+/* 모달 헤더 */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0rem 1.5rem 1.5rem 1.5rem;
+    border-bottom: 1px solid rgba(163, 163, 163, 0.2);
+}
+
+.title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--modal-accent-color);
+    margin: 0;
+}
+
+.closeButton {
+    background: #ECECEC;
+    border: none;
+    font-size: 2.5rem;
+    color: var(--modal-accent-color);
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s;
+    font-weight: 600;
+    box-shadow:
+        2px 2px 4px rgba(163, 163, 163, 0.6),
+        -2px -2px 4px rgba(255, 255, 255, 0.8);
+}
+
+.closeButton:hover {
+    box-shadow:
+        inset 2px 2px 4px rgba(163, 163, 163, 0.6),
+        inset -2px -2px 4px rgba(255, 255, 255, 0.8);
+    transform: scale(0.95);
+}
+
+/* 컨텐츠 영역 */
+.content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+/* 스크롤바 스타일 */
+.content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.content::-webkit-scrollbar-track {
+    background: #ECECEC;
+    border-radius: 10px;
+}
+
+.content::-webkit-scrollbar-thumb {
+    background: #ECECEC;
+    border-radius: 10px;
+    box-shadow:
+        inset 2px 2px 4px rgba(163, 163, 163, 0.6),
+        inset -2px -2px 4px rgba(255, 255, 255, 0.8);
+}
+
+.content::-webkit-scrollbar-thumb:hover {
+    box-shadow:
+        inset 1px 1px 2px rgba(163, 163, 163, 0.6),
+        inset -1px -1px 2px rgba(255, 255, 255, 0.8);
+}
+
+/* 리스트 로우 */
+.row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid rgba(163, 163, 163, 0.2);
+}
+
+.row:last-child {
+    border-bottom: none;
+}
+
+.label {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--modal-text-color);
+}
+
+.value {
+    text-align: right;
+    color: var(--modal-text-color);
+    font-size: 1rem;
+    opacity: 0.8;
+}
+
+/* 프로필 이미지 */
+.profileImage {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    object-fit: cover;
+    background-color: #ECECEC;
+    box-shadow:
+        2px 2px 4px rgba(163, 163, 163, 0.4),
+        -2px -2px 4px rgba(255, 255, 255, 0.6);
+}
+
+/* 이메일 인증 관련 */
+.emailWrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.25rem;
+}
+
+.unverified {
+    font-size: 0.75rem;
+    color: #dc2626;
+    background-color: #fef2f2;
+    padding: 2px 6px;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 500;
+}
+
+.verifyLink {
+    font-size: 0.75rem;
+    color: #2563eb;
+    text-decoration: none;
+    margin-left: 4px;
+    cursor: pointer;
+}
+
+.verifyLink:hover {
+    text-decoration: underline;
+}
+
+.verified {
+    font-size: 0.75rem;
+    color: #059669;
+    font-weight: 600;
+}
+
+/* ID 텍스트 */
+.userId {
+    font-family: monospace;
+    font-size: 0.85rem;
+    color: var(--modal-text-color);
+    opacity: 0.6;
+    word-break: break-all;
+}
+
+/* 로딩 및 에러 */
+.loading,
+.error {
+    text-align: center;
+    color: var(--modal-text-color);
+    padding: 2rem;
+    font-size: 1rem;
+}
+
+.error {
+    color: #dc2626;
+}
+
+.editButton {
+    background-color: transparent;
+    color: #2563eb;
+    border: 1px solid #2563eb;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+    box-shadow:
+        2px 2px 4px rgba(163, 163, 163, 0.4),
+        -2px -2px 4px rgba(255, 255, 255, 0.6);
+}
+
+.editButton:hover {
+    background-color: #2563eb;
+    color: white;
+    box-shadow:
+        inset 1px 1px 2px rgba(0, 0, 0, 0.2),
+        inset -1px -1px 2px rgba(255, 255, 255, 0.2);
+}
+
+.editButton:active {
+    transform: translateY(1px);
+}
