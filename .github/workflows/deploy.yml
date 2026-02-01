@@ -21,8 +21,26 @@ jobs:
           script: |
             echo "🚀 배포 시작..."
             
-            # 프로젝트 디렉토리로 이동 (실제 경로로 변경 필요)
-            cd ${{ secrets.EC2_PROJECT_PATH || '~/pulluprn' }}
+            # 프로젝트 디렉토리 찾기
+            PROJECT_PATH="${{ secrets.EC2_PROJECT_PATH }}"
+            if [ -z "$PROJECT_PATH" ]; then
+              # 경로가 설정되지 않았으면 자동으로 찾기
+              PROJECT_PATH=$(find ~ -name "pulluprn" -type d 2>/dev/null | head -1)
+              if [ -z "$PROJECT_PATH" ]; then
+                PROJECT_PATH=$(find /home -name "pulluprn" -type d 2>/dev/null | head -1)
+              fi
+            fi
+            
+            if [ -z "$PROJECT_PATH" ] || [ ! -d "$PROJECT_PATH" ]; then
+              echo "❌ 프로젝트 경로를 찾을 수 없습니다: $PROJECT_PATH"
+              echo "현재 위치: $(pwd)"
+              echo "홈 디렉토리 내용:"
+              ls -la ~
+              exit 1
+            fi
+            
+            echo "📁 프로젝트 경로: $PROJECT_PATH"
+            cd "$PROJECT_PATH" || exit 1
             
             # Git에서 최신 코드 가져오기
             echo "📥 Git pull..."
@@ -30,16 +48,25 @@ jobs:
             git reset --hard origin/main
             git pull origin main
             
-            # Docker Compose로 재시작
-            echo "🔄 Docker Compose 재시작..."
-            docker-compose down
-            docker-compose build --no-cache
-            docker-compose up -d
+            # Docker Compose 명령어 확인 (docker compose 또는 docker-compose)
+            if command -v docker &> /dev/null && docker compose version &> /dev/null; then
+              DOCKER_COMPOSE="docker compose"
+            elif command -v docker-compose &> /dev/null; then
+              DOCKER_COMPOSE="docker-compose"
+            else
+              echo "❌ Docker Compose를 찾을 수 없습니다"
+              exit 1
+            fi
+            
+            echo "🔄 Docker Compose 재시작 ($DOCKER_COMPOSE)..."
+            $DOCKER_COMPOSE down
+            $DOCKER_COMPOSE build --no-cache
+            $DOCKER_COMPOSE up -d
             
             # 컨테이너 상태 확인
             echo "✅ 배포 완료! 컨테이너 상태:"
-            docker-compose ps
+            $DOCKER_COMPOSE ps
             
             # 최근 로그 확인 (에러 체크용)
             echo "📋 최근 로그:"
-            docker-compose logs --tail=50
+            $DOCKER_COMPOSE logs --tail=50
