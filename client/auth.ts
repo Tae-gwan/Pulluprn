@@ -18,12 +18,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             return true;
         },
         async redirect({ url, baseUrl }) {
+            // NEXTAUTH_URL을 명시적으로 사용
+            const nextAuthUrl = process.env.NEXTAUTH_URL || baseUrl;
+            
             // callbackUrl이 있으면 그대로 사용
-            if (url && url.startsWith(baseUrl)) {
+            if (url && url.startsWith(nextAuthUrl)) {
                 return url;
             }
             // 기본적으로 홈으로 리다이렉트
-            return baseUrl;
+            return nextAuthUrl;
         },
         async session({ session, user }) {
             if (session.user && user) {
