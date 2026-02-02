@@ -12,12 +12,12 @@ export default function SignupPage(){
 
     useEffect(() => {
         if (isLoggedIn) {
-            router.push('/chat');
+            router.push('/');
         }
     }, [isLoggedIn, router]);
 
     const handleSignIn = () => {
-        signIn("google", { callbackUrl: "/chat" });
+        signIn("google", { callbackUrl: "/" });
     };
 
     if (isLoggedIn) {
