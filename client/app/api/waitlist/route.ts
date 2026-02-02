@@ -7,7 +7,7 @@ export async function POST(req: Request) {
 
         if (!email || !email.includes("@")) {
             return NextResponse.json(
-                { message: "유효한 이메일 주소를 입력해주세요." },
+                { message: "Please enter a valid email address." },
                 { status: 400 }
             );
         }
@@ -44,7 +44,7 @@ export async function POST(req: Request) {
         }
         return NextResponse.json(
             { 
-                message: "서버 오류가 발생했습니다. 나중에 다시 시도해주세요.",
+                message: "A server error occurred. Please try again later.",
                 error: process.env.NODE_ENV === "development" ? (error instanceof Error ? error.message : String(error)) : undefined
             },
             { status: 500 }

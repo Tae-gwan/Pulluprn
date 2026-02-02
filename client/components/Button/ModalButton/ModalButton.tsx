@@ -54,20 +54,20 @@ const ModalButton = memo(function ModalButton({ type }: ModalButtonProps) {
       {isOpen && (
         <div className={styles.overlay} onClick={handleCancel}>
           <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-            <button className={styles.closeButton} onClick={handleCancel} aria-label="닫기">
+            <button className={styles.closeButton} onClick={handleCancel} aria-label="Close">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="18" y1="6" x2="6" y2="18"></line>
                 <line x1="6" y1="6" x2="18" y2="18"></line>
               </svg>
             </button>
-            <h3 className={styles.title}>로그아웃</h3>
-            <p className={styles.message}>정말 로그아웃 하시겠습니까?</p>
+            <h3 className={styles.title}>Logout</h3>
+            <p className={styles.message}>Are you sure you want to log out?</p>
             <div className={styles.buttons}>
               <button className={styles.cancelButton} onClick={handleCancel}>
-                취소
+                Cancel
               </button>
               <button className={styles.confirmButton} onClick={handleConfirm}>
-                로그아웃
+                Logout
               </button>
             </div>
           </div>

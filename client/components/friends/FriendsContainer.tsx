@@ -96,12 +96,12 @@ export default function FriendsContainer() {
             });
 
             if (response.ok) {
-                alert("친구 요청을 보냈습니다!");
+                alert("Friend request sent!");
                 fetchFriends();
                 // 검색 결과는 유지하되 재검색 하면 상태 업데이트 됨 (또는 수동 업데이트)
             } else {
                 const data = await response.json();
-                alert(data.error || "친구 요청 실패");
+                alert(data.error || "Failed to send friend request");
             }
         } catch (error) {
             console.error("친구 추가 실패:", error);
@@ -117,7 +117,7 @@ export default function FriendsContainer() {
             });
 
             if (response.ok) {
-                alert("친구 요청을 수락했습니다!");
+                alert("Friend request accepted!");
                 fetchFriends();
             }
         } catch (error) {
@@ -134,7 +134,7 @@ export default function FriendsContainer() {
             });
 
             if (response.ok) {
-                alert("친구 요청을 거절했습니다.");
+                alert("Friend request declined.");
                 fetchFriends();
             }
         } catch (error) {
@@ -171,7 +171,7 @@ export default function FriendsContainer() {
                         type="text"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        placeholder="이메일 또는 이름으로 검색"
+                        placeholder="Search by email or name"
                         className={styles.searchInput}
                     />
                     <button type="submit" className={styles.searchButton}>search</button>
@@ -186,7 +186,7 @@ export default function FriendsContainer() {
                         onClick={() => toggleSection("search")}
                     >
                         <span className={styles.accordionTitle}>
-                            검색 결과 ({searchResults.length})
+                            Search results ({searchResults.length})
                         </span>
                         <span
                             className={`${styles.accordionIcon} ${expandedSections.search ? styles.expanded : ""
@@ -213,10 +213,10 @@ export default function FriendsContainer() {
                                     </span>
                                     {user.id !== userId && !isFriend(user.id) && (
                                         isPendingSent(user.id) ? (
-                                            <span className={styles.statusText}>요청 보냄</span>
+                                            <span className={styles.statusText}>Request sent</span>
                                         ) : (
                                             <button onClick={() => handleAddFriend(user.id)} className={styles.addButton}>
-                                                추가
+                                                Add
                                             </button>
                                         )
                                     )}
@@ -236,7 +236,7 @@ export default function FriendsContainer() {
                         onClick={() => toggleSection("received")}
                     >
                         <span className={styles.accordionTitle}>
-                            받은 요청 ({pendingReceived.length})
+                            Received requests ({pendingReceived.length})
                         </span>
                         <span className={`${styles.accordionIcon} ${expandedSections.received ? styles.expanded : ""}`}>▶</span>
                     </button>
@@ -255,8 +255,8 @@ export default function FriendsContainer() {
                                     </div>
                                     <span className={styles.simpleFriendName}>{req.name || req.email}</span>
                                     <div className={styles.actionButtons}>
-                                        <button onClick={() => handleAcceptRequest(req.friendshipId)} className={styles.acceptButton}>수락</button>
-                                        <button onClick={() => handleDeclineRequest(req.friendshipId)} className={styles.declineButton}>거절</button>
+                                        <button onClick={() => handleAcceptRequest(req.friendshipId)} className={styles.acceptButton}>Accept</button>
+                                        <button onClick={() => handleDeclineRequest(req.friendshipId)} className={styles.declineButton}>Decline</button>
                                     </div>
                                 </div>
                             ))}
@@ -274,7 +274,7 @@ export default function FriendsContainer() {
                         onClick={() => toggleSection("sent")}
                     >
                         <span className={styles.accordionTitle}>
-                            보낸 요청 ({pendingSent.length})
+                            Sent requests ({pendingSent.length})
                         </span>
                         <span className={`${styles.accordionIcon} ${expandedSections.sent ? styles.expanded : ""}`}>▶</span>
                     </button>
@@ -292,7 +292,7 @@ export default function FriendsContainer() {
                                         )}
                                     </div>
                                     <span className={styles.simpleFriendName}>{req.name || req.email}</span>
-                                    <span className={styles.statusText}>대기 중</span>
+                                    <span className={styles.statusText}>Pending</span>
                                 </div>
                             ))}
                         </div>
@@ -305,7 +305,7 @@ export default function FriendsContainer() {
                 {/* 왼쪽: 접속 중 */}
                 <div className={styles.friendsColumn}>
                     <div className={styles.columnHeader}>
-                        <h3 className={styles.columnTitle}>접속 중 ({onlineFriends.length})</h3>
+                        <h3 className={styles.columnTitle}>Online ({onlineFriends.length})</h3>
                     </div>
                     <div className={styles.friendsList}>
                         {onlineFriends.length > 0 ? (
@@ -317,7 +317,7 @@ export default function FriendsContainer() {
                                 />
                             ))
                         ) : (
-                            <div className={styles.emptyState}>접속 중인 친구가 없습니다</div>
+                            <div className={styles.emptyState}>No friends online</div>
                         )}
                     </div>
                 </div>
@@ -325,7 +325,7 @@ export default function FriendsContainer() {
                 {/* 오른쪽: 오프라인 */}
                 <div className={styles.friendsColumn}>
                     <div className={styles.columnHeader}>
-                        <h3 className={styles.columnTitle}>오프라인 ({offlineFriends.length})</h3>
+                        <h3 className={styles.columnTitle}>Offline ({offlineFriends.length})</h3>
                     </div>
                     <div className={styles.friendsList}>
                         {offlineFriends.length > 0 ? (
@@ -337,7 +337,7 @@ export default function FriendsContainer() {
                                 />
                             ))
                         ) : (
-                            <div className={styles.emptyState}>오프라인 친구가 없습니다</div>
+                            <div className={styles.emptyState}>No offline friends</div>
                         )}
                     </div>
                 </div>

@@ -12,7 +12,7 @@ export default function NeumorphismExample() {
   return (
     <div className={styles.container}>
       <div className={styles.card}>
-        <h1 style={{ marginBottom: '32px', color: '#333' }}>뉴모피즘 UI 예제</h1>
+        <h1 style={{ marginBottom: '32px', color: '#333' }}>Neumorphism UI Example</h1>
 
         {/* 버튼들 */}
         <div style={{ display: 'flex', gap: '16px', marginBottom: '32px', flexWrap: 'wrap' }}>

@@ -3,11 +3,19 @@ import Google from "next-auth/providers/google";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { PrismaClient } from "@prisma/client";
 
+// 프로덕션에서 AUTH_SECRET 없으면 Auth.js가 500 냄 → 시작 시점에 검사
+if (process.env.NODE_ENV === "production" && !process.env.AUTH_SECRET?.trim()) {
+    throw new Error(
+        "AUTH_SECRET is missing or empty. Add AUTH_SECRET to .env in the project root (e.g. run: openssl rand -base64 32) and restart the client container."
+    );
+}
+
 const globalForPrisma = globalThis as unknown as { prisma: PrismaClient }
 const prisma = globalForPrisma.prisma || new PrismaClient()
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+    secret: process.env.AUTH_SECRET,
     adapter: PrismaAdapter(prisma),
     providers: [Google],
     pages: {

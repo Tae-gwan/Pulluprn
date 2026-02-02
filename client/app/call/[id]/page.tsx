@@ -25,7 +25,7 @@ export default function VideoCallWithFriendPage({
     return (
       <div className={styles.container}>
         <h1 className={styles.title}>
-          로그인 후 이용 가능합니다.
+          Please sign in to use this feature.
         </h1>
       </div>
     );
@@ -38,7 +38,7 @@ export default function VideoCallWithFriendPage({
       {!isJoined ? (
         <div className={styles.loadingBox}>
           <p className={styles.loadingText}>
-            통화를 준비하고 있습니다...
+            Preparing the call...
           </p>
         </div>
       ) : (

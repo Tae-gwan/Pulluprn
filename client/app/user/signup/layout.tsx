@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "회원가입 - PullUpRN",
-  description: "구글 계정으로 간편하게 시작하세요",
+  title: "Sign up - PullUpRN",
+  description: "Get started easily with your Google account",
 };
 
 export default function SignupLayout({

@@ -37,14 +37,14 @@ export default function FriendItem({
                 {isOnline && <span className={styles.onlineIndicator}></span>}
             </div>
             <span className={styles.simpleFriendName}>
-                {friend.name || friend.email || "이름 없음"}
+                {friend.name || friend.email || "No name"}
             </span>
             <div className={styles.actionButtons}>
                 {showCallButton && (
                     <Link
                         href={`/call/${friend.id}?name=${encodeURIComponent(friend.name || "Friend")}`}
                         className={styles.callButton}
-                        aria-label="영상통화"
+                        aria-label="Video call"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24">
                             <path d="M17 10.5V7c0-1.1-.9-2-2-2H5C3.9 5 3 5.9 3 7v10c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2v-3.5l4 4v-11l-4 4z" fill="currentColor" />
@@ -52,7 +52,7 @@ export default function FriendItem({
                     </Link>
                 )}
                 {showMessageButton && (
-                    <Link href={`/chat/${friend.id}`} className={styles.messageButton} aria-label="채팅">
+                    <Link href={`/chat/${friend.id}`} className={styles.messageButton} aria-label="Chat">
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             width="25"

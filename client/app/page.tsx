@@ -62,11 +62,11 @@ export default function LandingPage() {
         setEmail("");
       } else {
         setSubmissionStatus("error");
-        setMessage(data.message || "오류가 발생했습니다.");
+        setMessage(data.message || "Something went wrong.");
       }
     } catch (error) {
       setSubmissionStatus("error");
-      setMessage("서버 연결에 실패했습니다.");
+      setMessage("Failed to connect to the server.");
     }
   };
 

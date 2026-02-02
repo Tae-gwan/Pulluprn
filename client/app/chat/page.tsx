@@ -6,10 +6,10 @@ export default function MessagePage() {
     return (
         <div className={styles.emptyChatState}>
             <div className={styles.emptyChatMessage}>
-                채팅을 시작하세요
+                Start a conversation
             </div>
             <div className={styles.emptyChatSubtext}>
-                왼쪽에서 대화할 친구를 선택해주세요
+                Select a friend from the left to start chatting
             </div>
         </div>
     );

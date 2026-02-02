@@ -69,7 +69,7 @@ export default function ProfilePage() {
                         <div className={styles.row}>
                             <span className={styles.label}>Username</span>
                             <div className={styles.value}>
-                                {user.name || "설정되지 않음"}
+                                {user.name || "Not set"}
                             </div>
                         </div>
 
@@ -93,7 +93,7 @@ export default function ProfilePage() {
                         <div className={styles.row}>
                             <span className={styles.label}>Name</span>
                             <div className={styles.value}>
-                                {user.name || "설정되지 않음"}
+                                {user.name || "Not set"}
                             </div>
                         </div>
 
@@ -108,13 +108,13 @@ export default function ProfilePage() {
                         {/* Edit Button (Placeholder) */}
                         <div className={styles.row}>
                             <span className={styles.label}></span>
-                            <button className={styles.editButton} onClick={() => alert("준비 중입니다.")}>
+                            <button className={styles.editButton} onClick={() => alert("Coming soon.")}>
                                 Edit Profile
                             </button>
                         </div>
                     </>
                 ) : (
-                    <div className={styles.error}>유저 정보를 찾을 수 없습니다.</div>
+                    <div className={styles.error}>User not found.</div>
                 )}
             </div>
         </div>

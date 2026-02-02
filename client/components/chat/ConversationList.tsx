@@ -63,7 +63,7 @@ export default function ConversationList() {
                                 </div>
                                 <div className={styles.itemInfo}>
                                     <div className={styles.itemName}>
-                                        {room.name || room.email || "이름 없음"}
+                                        {room.name || room.email || "No name"}
                                     </div>
                                     {room.lastMessage && (
                                         <div className={styles.itemPreview}>
@@ -75,7 +75,7 @@ export default function ConversationList() {
                             );
                         })
                     ) : (
-                        <div className={styles.emptyState}>대화 목록이 없습니다</div>
+                        <div className={styles.emptyState}>No conversations yet</div>
                     )}
                 </div>
             </div>

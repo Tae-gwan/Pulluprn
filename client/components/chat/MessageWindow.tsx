@@ -29,11 +29,11 @@ const MessageWindow = memo(function MessageWindow({ selectedFriend }: MessageWin
             <div className={styles.header}>
                 <h2 className={styles.title}>
                     {selectedFriend
-                        ? selectedFriend.name || "이름 없음"
+                        ? selectedFriend.name || "No name"
                         : "Message"
                     }
                 </h2>
-                <button className={styles.closeButton} onClick={() => router.push('/chat')} aria-label="닫기">
+                <button className={styles.closeButton} onClick={() => router.push('/chat')} aria-label="Close">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <line x1="18" y1="6" x2="6" y2="18"></line>
                         <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -79,10 +79,10 @@ const MessageWindow = memo(function MessageWindow({ selectedFriend }: MessageWin
             ) : (
                 <div className={styles.emptyChatState}>
                     <div className={styles.emptyChatMessage}>
-                        채팅을 시작하세요
+                        Start a conversation
                     </div>
                     <div className={styles.emptyChatSubtext}>
-                        왼쪽에서 대화할 친구를 선택해주세요
+                        Select a friend from the left to start chatting
                     </div>
                 </div>
             )}

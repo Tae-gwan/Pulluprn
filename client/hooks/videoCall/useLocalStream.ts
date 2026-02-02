@@ -18,7 +18,7 @@ export function useLocalStream() {
         } catch (e) {
             console.error(e);
             setError(e instanceof Error ? e : new Error("Failed to get media stream"));
-            alert("카메라/마이크 권한이 필요합니다.");
+            alert("Camera and microphone permission is required.");
         }
     }, [stream]);
 

@@ -22,7 +22,7 @@ export const buttonConfig: Record<ModalButtonType, ButtonConfig> = {
       </svg>
     ),
     label: "Friends",
-    ariaLabel: "친구창 열기",
+    ariaLabel: "Open friends",
     color: "#FF6B35",
     labelColor: "#727272",
     path: "/friends",
@@ -34,7 +34,7 @@ export const buttonConfig: Record<ModalButtonType, ButtonConfig> = {
       </svg>
     ),
     label: "Chat",
-    ariaLabel: "채팅창 열기",
+    ariaLabel: "Open chat",
     color: "#FF6B35",
     labelColor: "#727272",
     path: "/chat",
@@ -47,7 +47,7 @@ export const buttonConfig: Record<ModalButtonType, ButtonConfig> = {
       </svg>
     ),
     label: "Profile",
-    ariaLabel: "프로필 열기",
+    ariaLabel: "Open profile",
     color: "#FF6B35",
     labelColor: "#727272",
     path: "/profile",
@@ -60,7 +60,7 @@ export const buttonConfig: Record<ModalButtonType, ButtonConfig> = {
       </svg>
     ),
     label: "Logout",
-    ariaLabel: "로그아웃",
+    ariaLabel: "Logout",
     color: "#ff2d1e",
     labelColor: "#f64040",
   },
