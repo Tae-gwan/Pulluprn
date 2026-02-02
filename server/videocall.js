@@ -16,7 +16,9 @@ const server = http.createServer(app);
 // NOTE:
 // - 프론트엔드(Next.js)는 기본적으로 http://localhost:3000 에서 동작
 // - 이 서버는 별도의 포트(예: 3002)를 사용해 CORS 허용
+// path를 /videocall/socket.io로 설정 → Nginx에서 /videocall/을 3002로 보낼 때 채팅(3001)과 구분됨
 const io = new Server(server, {
+  path: "/videocall/socket.io",
   cors: {
     origin: process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : "*",
     methods: ["GET", "POST"],
