@@ -1,18 +1,18 @@
 version: '3.8'
 
 services:
-  # 프론트엔드 (Next.js)
+  # 프론트엔드 (Next.js) - 프로덕션: build 후 start
   client:
     image: node:22
     working_dir: /app
     volumes:
       - ./client:/app
       - /app/node_modules
-    command: sh -c "npm install && npx prisma generate && npm run dev"
+    command: sh -c "npm install && npx prisma generate && npm run build && npm start"
     ports:
       - "3000:3000"
     environment:
-      - NODE_ENV=development
+      - NODE_ENV=production
       - DATABASE_URL=${DATABASE_URL}
       - AUTH_SECRET=${AUTH_SECRET}
       - AUTH_GOOGLE_ID=${AUTH_GOOGLE_ID}
@@ -24,7 +24,7 @@ services:
     depends_on:
       - db
 
-  # 백엔드 (Express + Mediasoup)
+  # 백엔드 (Express + Mediasoup) - 프로덕션: nodemon 없이 node로 실행
   server:
     image: node:22
     working_dir: /app
@@ -32,14 +32,14 @@ services:
       - ./server:/app
       - ./client/prisma:/app/prisma:ro  # Prisma 스키마 읽기 전용 마운트
       - /app/node_modules
-    command: sh -c "npm install && npx prisma generate --schema=./prisma/schema.prisma && (npx nodemon chat.js & npx nodemon videocall.js)"
+    command: sh -c "npm install && npx prisma generate --schema=./prisma/schema.prisma && (node chat.js & node videocall.js & wait)"
     ports:
       - "3001:3001"
       - "3002:3002"
       # Mediasoup용 UDP 포트 개방
       - "20000-20100:20000-20100/udp"
     environment:
-      - NODE_ENV=development
+      - NODE_ENV=production
       - DATABASE_URL=${DATABASE_URL}
       - CORS_ORIGIN=${CORS_ORIGIN}
       - VIDEOCALL_PORT=${VIDEOCALL_PORT}
