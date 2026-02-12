@@ -2,31 +2,37 @@
 FROM node:22-alpine AS builder
 WORKDIR /app
 
-COPY package*.json ./
+# OpenSSL 설치
+RUN apk add --no-cache openssl
+
+# 패키지 파일 & 스키마 복사 (루트 기준)
+COPY server/package*.json ./server/
 COPY prisma ./prisma/
 
-# 모든 의존성 설치 (Prisma CLI 포함)
+WORKDIR /app/server
+# 의존성 설치
 RUN npm ci
 
-# 소스 전체 복사 및 Prisma 클라이언트 생성
-COPY . .
-RUN npx prisma generate
+# 소스 복사 & Prisma Client 생성
+COPY server/ .
+# 스키마 위치 지정하여 생성
+RUN npx prisma generate --schema=../prisma/schema.prisma
 
 # 2단계: 실행 (Runner)
 FROM node:22-alpine AS runner
 WORKDIR /app
 
-# 프로덕션 환경 설정
+# OpenSSL 설치
+RUN apk add --no-cache openssl
+
 ENV NODE_ENV=production
 
-# 1단계에서 완성된 결과물을 그대로 가져옴
-# 프로덕션에 불필요한 파일은 .dockerignore로 필터링
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package*.json ./
+# 필요한 파일만 복사
+COPY --from=builder /app/server/node_modules ./node_modules
+COPY --from=builder /app/server/package*.json ./
 COPY --from=builder /app/prisma ./prisma
-COPY --from=builder /app ./
+COPY --from=builder /app/server ./
 
 EXPOSE 3001 3002
 
-# 기본 실행 명령
 CMD ["node", "chat.js"]

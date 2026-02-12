@@ -10,7 +10,9 @@ x-logging: &default-logging
 services:
   # 1. 프론트엔드: Next.js (Standalone 빌드)
   client:
-    build: ./client
+    build:
+      context: .
+      dockerfile: client/Dockerfile
     container_name: pulluprn-client
     restart: always
     ports:
@@ -35,7 +37,9 @@ services:
 
   # 2. 백엔드: 채팅 서버 (Socket.IO)
   server-chat:
-    build: ./server
+    build:
+      context: .
+      dockerfile: server/Dockerfile
     container_name: pulluprn-chat
     restart: always
     ports:
@@ -53,7 +57,9 @@ services:
 
   # 3. 백엔드: 화상 통화 서버
   server-video:
-    build: ./server
+    build:
+      context: .
+      dockerfile: server/Dockerfile
     container_name: pulluprn-video
     restart: always
     ports:
