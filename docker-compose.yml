@@ -48,7 +48,7 @@ services:
     ports:
       - "3001:3001"
     # 시작 시 Prisma 마이그레이션을 실행한 뒤 서버를 띄웁니다.
-    command: sh -c "npx prisma migrate deploy && node chat.js"
+    command: sh -c "npx prisma db push && node chat.js"
     environment:
       - NODE_ENV=production
       - DATABASE_URL=${DATABASE_URL}
