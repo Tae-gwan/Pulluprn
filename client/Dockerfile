@@ -23,6 +23,12 @@ ENV AUTH_SECRET="dummy_secret_for_build"
 # 이제 위치가 /app 이므로 ./prisma/schema.prisma
 RUN npx prisma generate --schema=./prisma/schema.prisma
 
+# Build time args
+ARG NEXT_PUBLIC_SOCKET_URL
+ARG NEXT_PUBLIC_VIDEO_SOCKET_URL
+ENV NEXT_PUBLIC_SOCKET_URL=${NEXT_PUBLIC_SOCKET_URL}
+ENV NEXT_PUBLIC_VIDEO_SOCKET_URL=${NEXT_PUBLIC_VIDEO_SOCKET_URL}
+
 # Next.js 빌드
 RUN npm run build
 

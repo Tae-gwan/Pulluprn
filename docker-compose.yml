@@ -13,6 +13,9 @@ services:
     build:
       context: .
       dockerfile: client/Dockerfile
+      args:
+        NEXT_PUBLIC_SOCKET_URL: ${NEXT_PUBLIC_SOCKET_URL}
+        NEXT_PUBLIC_VIDEO_SOCKET_URL: ${NEXT_PUBLIC_VIDEO_SOCKET_URL}
     container_name: pulluprn-client
     restart: always
     ports:
