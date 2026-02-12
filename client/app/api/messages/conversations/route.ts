@@ -73,9 +73,9 @@ export async function GET() {
         },
         lastMessage: lastMessage
           ? {
-              text: lastMessage.text,
-              timestamp: lastMessage.createdAt.getTime(),
-            }
+            text: lastMessage.text,
+            timestamp: lastMessage.createdAt.getTime(),
+          }
           : null,
         unreadCount,
         chatRoomId: room.id,

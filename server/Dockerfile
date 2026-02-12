@@ -6,17 +6,20 @@ WORKDIR /app
 RUN apk add --no-cache openssl
 
 # 패키지 파일 & 스키마 복사 (루트 기준)
-COPY server/package*.json ./server/
+# server/package.json -> /app/package.json
+COPY server/package*.json ./
 COPY prisma ./prisma/
 
-WORKDIR /app/server
 # 의존성 설치
 RUN npm ci
 
 # 소스 복사 & Prisma Client 생성
+# server/ -> /app/
 COPY server/ .
-# 스키마 위치 지정하여 생성
-RUN npx prisma generate --schema=../prisma/schema.prisma
+# 스키마 위치: /app/prisma/schema.prisma
+# 실행 위치: /app/
+# 따라서 경로: ./prisma/schema.prisma
+RUN npx prisma generate --schema=./prisma/schema.prisma
 
 # 2단계: 실행 (Runner)
 FROM node:22-alpine AS runner
@@ -28,10 +31,11 @@ RUN apk add --no-cache openssl
 ENV NODE_ENV=production
 
 # 필요한 파일만 복사
-COPY --from=builder /app/server/node_modules ./node_modules
-COPY --from=builder /app/server/package*.json ./
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package*.json ./
 COPY --from=builder /app/prisma ./prisma
-COPY --from=builder /app/server ./
+# 소스 코드가 이제 바로 /app에 있으므로 그대로 복사
+COPY --from=builder /app/*.js ./
 
 EXPOSE 3001 3002
 
