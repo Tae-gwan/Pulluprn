@@ -1,0 +1,19 @@
+# 의존성 제외 (Docker 내부에서 새로 설치)
+node_modules
+npm-debug.log
+
+# 환경 변수 제외
+.env
+.env.*
+
+# OS 파일 제외
+.DS_Store
+
+# Git 관련 제외
+.git
+.gitignore
+
+# 기타 개발 툴 설정 제외
+.editorconfig
+.eslintrc.js
+.prettierrc

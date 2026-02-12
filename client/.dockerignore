@@ -1,0 +1,25 @@
+# 의존성 제외
+node_modules
+npm-debug.log
+yarn-error.log
+
+# Next.js 빌드 산출물 제외
+.next
+out
+build
+
+# 테스트 및 커버리지
+coverage
+__tests__
+
+# 환경 변수 제외
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# OS 및 에디터 설정
+.DS_Store
+.vscode
+.idea

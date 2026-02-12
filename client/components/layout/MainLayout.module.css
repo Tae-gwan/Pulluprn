@@ -109,3 +109,65 @@
         border-radius: 40% 60% 60% 40% / 40% 40% 60% 60%;
     }
 }
+
+/* ---------- Tablet ---------- */
+@media (max-width: 1024px) {
+    .container {
+        gap: 0.5%;
+        padding: 0 8px;
+    }
+
+    .window {
+        min-width: 90%;
+        max-width: 90%;
+        height: 75vh;
+        padding: 24px;
+    }
+
+    .sideButtons {
+        gap: 2rem;
+        padding: 16px;
+    }
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        padding: 0;
+        align-items: stretch;
+        justify-content: flex-start;
+        gap: 0;
+    }
+
+    .window {
+        min-width: 100%;
+        max-width: 100%;
+        height: calc(100vh - 56px);
+        min-height: 0;
+        border-radius: 20px 20px 0 0;
+        padding: 16px;
+        box-shadow: none;
+    }
+
+    .sideButtons {
+        flex-direction: row;
+        justify-content: center;
+        gap: 1rem;
+        height: auto;
+        padding: 12px 8px;
+    }
+}
+
+/* ---------- Small mobile ---------- */
+@media (max-width: 480px) {
+    .window {
+        padding: 12px;
+        border-radius: 16px 16px 0 0;
+    }
+
+    .sideButtons {
+        gap: 0.75rem;
+        padding: 8px;
+    }
+}

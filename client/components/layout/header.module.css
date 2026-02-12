@@ -148,3 +148,78 @@
     inset -2px -2px 4px rgba(255, 255, 255, 0.2);
 }
 
+/* ---------- Tablet ---------- */
+@media (max-width: 1024px) {
+  .container {
+    padding: 0.75rem 1.25rem;
+  }
+
+  .logo {
+    font-size: 1.5rem;
+    letter-spacing: 0.2em;
+  }
+
+  .loginButton,
+  .signupButton {
+    padding: 0.45rem 1.25rem;
+    font-size: 1rem;
+  }
+
+  .logoutButton,
+  .profileButton {
+    padding: 0.45rem 1rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 768px) {
+  .container {
+    padding: 0.5rem 1rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .logo {
+    font-size: 1.25rem;
+    letter-spacing: 0.1em;
+  }
+
+  .nav {
+    gap: 0.5rem;
+  }
+
+  .loginButton,
+  .signupButton {
+    padding: 0.4rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  .logoutButton,
+  .profileButton {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.85rem;
+  }
+}
+
+/* ---------- Small mobile ---------- */
+@media (max-width: 480px) {
+  .container {
+    padding: 0.5rem 0.75rem;
+  }
+
+  .logo {
+    font-size: 1rem;
+    letter-spacing: 0.05em;
+  }  .loginButton,
+  .signupButton {
+    padding: 0.35rem 0.75rem;
+    font-size: 0.85rem;
+  }
+
+  .logoutButton,
+  .profileButton {
+    padding: 0.35rem 0.6rem;
+    font-size: 0.8rem;
+  }
+}

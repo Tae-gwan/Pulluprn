@@ -142,3 +142,25 @@
     -2px -2px 4px rgba(255, 255, 255, 0.7);
 }
 
+@media (max-width: 480px) {
+  .container {
+    padding: 12px;
+  }
+
+  .card {
+    padding: 32px 24px;
+    border-radius: 20px;
+  }  .title {
+    font-size: 1.5rem;
+  }
+
+  .subtitle {
+    font-size: 0.9rem;
+    margin-bottom: 24px;
+  }
+
+  .googleButton {
+    padding: 12px 20px;
+    font-size: 0.9rem;
+  }
+}

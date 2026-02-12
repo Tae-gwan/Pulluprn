@@ -6,3 +6,10 @@
   background-color: transparent;
   overflow: hidden;
 }
+
+@media (max-width: 768px) {
+  .chatLayout {
+    flex-direction: column;
+    min-height: 0;
+  }
+}
