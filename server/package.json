@@ -15,7 +15,6 @@
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
-    "mediasoup": "^3.19.14",
     "socket.io": "^4.8.3"
   },
   "devDependencies": {
