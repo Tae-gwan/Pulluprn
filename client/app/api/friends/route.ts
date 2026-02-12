@@ -42,7 +42,7 @@ export async function GET() {
     const pendingReceived: any[] = [];
 
     // 메모리 상에서 분류
-    allFriendships.forEach((friendship) => {
+    allFriendships.forEach((friendship: any) => {
       if (friendship.status === "ACCEPTED") {
         const friend =
           friendship.senderId === user.id
