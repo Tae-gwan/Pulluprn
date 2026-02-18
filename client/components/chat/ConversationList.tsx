@@ -21,9 +21,9 @@ export default function ConversationList() {
     return (
         <div className={styles.sidebar}>
             <div className={styles.sidebarHeader}>
-                <h3 className={styles.sidebarTitle}>Conversation List</h3>
+                <h3 className={styles.sidebarTitle}>Messages</h3>
             </div>
-            
+
             {/* 대화 목록 */}
             <div className={styles.section}>
                 <div className={styles.list}>
@@ -31,7 +31,7 @@ export default function ConversationList() {
                         chatRooms.map((room) => {
                             // ModalButton과 동일한 방식: pathname으로 active 상태 확인 + optimisticActive
                             const isActive = pathname === `/chat/${room.id}` || optimisticActiveId === room.id;
-                            
+
                             const handleClick = () => {
                                 // active 상태일 때 다시 클릭하면 선택 해제
                                 if (isActive && pathname === `/chat/${room.id}`) {
@@ -43,35 +43,35 @@ export default function ConversationList() {
                                 setOptimisticActiveId(room.id);
                                 router.push(`/chat/${room.id}`);
                             };
-                            
+
                             return (
-                            <div
-                                key={room.id}
-                                className={`${styles.listItem} ${isActive ? styles.active : ''}`}
-                                onClick={handleClick}
-                            >
-                              {/* avatar는 나중에 따로 컴포넌트 만드는 거 고려 */}
-                                <div className={styles.avatar}>
-                                    {room.image ? (
-                                        <img src={room.image} alt={room.name || ""} />
-                                    ) : (
-                                        <div className={styles.avatarPlaceholder}>
-                                            {room.name?.[0]?.toUpperCase() || "?"}
-                                        </div>
-                                    )}
-                                    {isUserOnline(room.id) && <span className={styles.onlineIndicator}></span>}
-                                </div>
-                                <div className={styles.itemInfo}>
-                                    <div className={styles.itemName}>
-                                        {room.name || room.email || "No name"}
+                                <div
+                                    key={room.id}
+                                    className={`${styles.listItem} ${isActive ? styles.active : ''}`}
+                                    onClick={handleClick}
+                                >
+                                    {/* avatar는 나중에 따로 컴포넌트 만드는 거 고려 */}
+                                    <div className={styles.avatar}>
+                                        {room.image ? (
+                                            <img src={room.image} alt={room.name || ""} />
+                                        ) : (
+                                            <div className={styles.avatarPlaceholder}>
+                                                {room.name?.[0]?.toUpperCase() || "?"}
+                                            </div>
+                                        )}
+                                        {isUserOnline(room.id) && <span className={styles.onlineIndicator}></span>}
                                     </div>
-                                    {room.lastMessage && (
-                                        <div className={styles.itemPreview}>
-                                            {room.lastMessage}
+                                    <div className={styles.itemInfo}>
+                                        <div className={styles.itemName}>
+                                            {room.name || room.email || "No name"}
                                         </div>
-                                    )}
+                                        {room.lastMessage && (
+                                            <div className={styles.itemPreview}>
+                                                {room.lastMessage}
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
-                            </div>
                             );
                         })
                     ) : (

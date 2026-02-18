@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { useSessionContext } from '@/context/SessionContext';
 import { socketService } from '@/services/socketService';
 
@@ -45,6 +45,9 @@ export function useMessageInput({
         [inputValue, username, roomId]
     );
 
+    // 타이핑 이벤트 쓰로틀링을 위한 Ref
+    const lastTypingEmitRef = useRef<number>(0);
+
     // 입력 변경 핸들러
     const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
@@ -59,10 +62,14 @@ export function useMessageInput({
             return;
         }
 
-        // 타이핑 시작 이벤트 전송
-        socketService.emitTyping();
+        // 3초에 한 번만 타이핑 시작 이벤트 전송 (쓰로틀링)
+        const now = Date.now();
+        if (now - lastTypingEmitRef.current >= 3000) {
+            socketService.emitTyping();
+            lastTypingEmitRef.current = now;
+        }
 
-        // 1초 후 stop typing 전송 (타이머 시작)
+        // stop typing 타이머는 매 입력마다 재설정 (Debounce)
         socketService.startTypingTimer();
     }, []);
 

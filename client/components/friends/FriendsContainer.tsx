@@ -42,11 +42,11 @@ export default function FriendsContainer() {
     const { isUserOnline } = useOnlineUsers();
 
     // useOnlineUsers를 사용하여 온라인 상태 확인
-    const onlineFriends = useMemo(() => 
+    const onlineFriends = useMemo(() =>
         friends.filter((f) => isUserOnline(f.id)),
         [friends, isUserOnline]
     );
-    const offlineFriends = useMemo(() => 
+    const offlineFriends = useMemo(() =>
         friends.filter((f) => !isUserOnline(f.id)),
         [friends, isUserOnline]
     );
@@ -174,7 +174,12 @@ export default function FriendsContainer() {
                         placeholder="Search by email or name"
                         className={styles.searchInput}
                     />
-                    <button type="submit" className={styles.searchButton}>search</button>
+                    <button type="submit" className={styles.searchButton}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
+                            <circle cx="11" cy="11" r="6.5"></circle>
+                            <line x1="21" y1="21" x2="15.8" y2="15.8"></line>
+                        </svg>
+                    </button>
                 </form>
             </div>
 
@@ -305,12 +310,12 @@ export default function FriendsContainer() {
                 {/* 왼쪽: 접속 중 */}
                 <div className={styles.friendsColumn}>
                     <div className={styles.columnHeader}>
-                        <h3 className={styles.columnTitle}>Online ({onlineFriends.length})</h3>
+                        <h3 className={styles.columnTitle}>Online</h3>
                     </div>
                     <div className={styles.friendsList}>
                         {onlineFriends.length > 0 ? (
                             onlineFriends.map((friend) => (
-                                <FriendItem 
+                                <FriendItem
                                     key={friend.id}
                                     friend={friend}
                                     isOnline={true}
@@ -325,12 +330,12 @@ export default function FriendsContainer() {
                 {/* 오른쪽: 오프라인 */}
                 <div className={styles.friendsColumn}>
                     <div className={styles.columnHeader}>
-                        <h3 className={styles.columnTitle}>Offline ({offlineFriends.length})</h3>
+                        <h3 className={styles.columnTitle}>Offline</h3>
                     </div>
                     <div className={styles.friendsList}>
                         {offlineFriends.length > 0 ? (
                             offlineFriends.map((friend) => (
-                                <FriendItem 
+                                <FriendItem
                                     key={friend.id}
                                     friend={friend}
                                     isOnline={false}

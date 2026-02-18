@@ -10,7 +10,8 @@ RUN apk add --no-cache openssl
 COPY server/package*.json ./
 COPY prisma ./prisma/
 
-# 의존성 설치
+# 의존성 설치 (채팅 서버는 브라우저 불필요)
+ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
 RUN npm ci
 
 # 소스 복사 & Prisma Client 생성

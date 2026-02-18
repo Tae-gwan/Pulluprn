@@ -43,13 +43,12 @@ export default function NavButton({ type }: NavButtonProps) {
       onClick={handleClick}
     >
       <div
-        className={`${styles.button} ${isActive ? styles.active : ""}`}
+        className={`${styles.button} ${isActive ? styles.active : ""} ${styles[type]}`}
         aria-label={buttonInfo.ariaLabel}
-        style={{ color: buttonInfo.color }}
       >
         {buttonInfo.icon}
       </div>
-      <span className={styles.label} style={{ color: buttonInfo.labelColor }}>
+      <span className={`${styles.label} ${styles[type + 'Label']}`}>
         {buttonInfo.label}
       </span>
     </Link>

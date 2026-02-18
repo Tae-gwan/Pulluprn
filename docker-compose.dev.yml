@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  # 클라이언트는 로컬에서 직접 실행 (npm run dev)
+  # 서버만 Docker로 실행
+
+  # 1. 채팅 서버 개발 설정
+  server-chat:
+    command: npx nodemon chat.js
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+
+  # 2. 화상 통화 서버 개발 설정
+  server-video:
+    command: npx nodemon videocall.js
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+
+  # 3. 브라우저 렌더링 서버 개발 설정
+  server-browser:
+    command: npx nodemon browser.js
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - ./server:/app
+      - /app/node_modules

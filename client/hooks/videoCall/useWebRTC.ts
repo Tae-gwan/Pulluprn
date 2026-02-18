@@ -9,6 +9,8 @@ const rtcConfig: RTCConfiguration = {
     ],
 };
 
+export type ConnectionStatus = "connecting" | "connected" | "disconnected" | "failed";
+
 interface UseWebRTCProps {
     stream: MediaStream | null;
     roomName: string | null;
@@ -16,11 +18,17 @@ interface UseWebRTCProps {
 
 export function useWebRTC({ stream, roomName }: UseWebRTCProps) {
     const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
+    const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>("connecting");
     const peerConnectionRef = useRef<RTCPeerConnection | null>(null);
 
     useEffect(() => {
         // MediaStream과 RoomName이 모두 준비되어야 시작
         if (!stream || !roomName) return;
+
+        // React Strict Mode 대응: cleanup 후 stale 콜백 방지
+        let mounted = true;
+
+        setConnectionStatus("connecting");
 
         // 소켓 연결
         if (!videoSocket.connected) {
@@ -32,25 +40,43 @@ export function useWebRTC({ stream, roomName }: UseWebRTCProps) {
         peerConnectionRef.current = pc;
 
         // 내 트랙 추가
-        //stream.getTracks()는 MediaStreamTrack[]를 반환
         stream.getTracks().forEach((track) => {
-            //Offer 생성 시 내 트랙 추가
             pc.addTrack(track, stream);
         });
 
         // 상대방 트랙 수신 했을 때 실행되는 이벤트 핸들러
-        // 브라우저 내부 ICE Agent가 상대방 트랙을 수신했을 때 실행됨
         pc.ontrack = (event) => {
+            if (!mounted) return;
             const [remote] = event.streams;
             if (remote) {
                 setRemoteStream(remote);
             }
         };
 
-        // 브라우저가 ICE Candidate를 수집할 때마다 실행되는 이벤트 핸들러
-        // setLocalDescription 후에 실행됨
-        // ICE Candidate를 서버로 전송
+        // 연결 상태 변경 감지
+        pc.onconnectionstatechange = () => {
+            if (!mounted) return;
+            switch (pc.connectionState) {
+                case "connected":
+                    setConnectionStatus("connected");
+                    break;
+                case "disconnected":
+                case "closed":
+                    setConnectionStatus("disconnected");
+                    break;
+                case "failed":
+                    setConnectionStatus("failed");
+                    break;
+                case "connecting":
+                case "new":
+                    setConnectionStatus("connecting");
+                    break;
+            }
+        };
+
+        // ICE Candidate 수집
         pc.onicecandidate = (event) => {
+            if (!mounted) return;
             if (event.candidate) {
                 videoSocket.emit("ice", event.candidate, roomName);
             }
@@ -58,10 +84,16 @@ export function useWebRTC({ stream, roomName }: UseWebRTCProps) {
 
         // --- Signaling Event Handlers ---
 
-        // 서버로부터 Welcome 수신 시(누군가 입장 시)Offer를 전송하는 콜백함수
         const createAndSendOffer = async () => {
+            if (!mounted) return;
+            // signalingState 체크 — 이미 offer/answer가 진행 중이면 무시
+            if (pc.signalingState !== "stable") {
+                console.warn(`Skipping offer creation: signalingState is "${pc.signalingState}"`);
+                return;
+            }
             try {
                 const offer = await pc.createOffer();
+                if (!mounted) return;
                 await pc.setLocalDescription(offer);
                 videoSocket.emit("offer", offer, roomName);
             } catch (e) {
@@ -69,11 +101,12 @@ export function useWebRTC({ stream, roomName }: UseWebRTCProps) {
             }
         };
 
-        // Offer 수신 후 Answer를 전송하는 콜백함수
         const handleOffer = async (offer: RTCSessionDescriptionInit) => {
+            if (!mounted) return;
             try {
                 await pc.setRemoteDescription(new RTCSessionDescription(offer));
                 const answer = await pc.createAnswer();
+                if (!mounted) return;
                 await pc.setLocalDescription(answer);
                 videoSocket.emit("answer", answer, roomName);
             } catch (e) {
@@ -81,8 +114,8 @@ export function useWebRTC({ stream, roomName }: UseWebRTCProps) {
             }
         };
 
-        // 3) Answer 수신
         const handleAnswer = async (answer: RTCSessionDescriptionInit) => {
+            if (!mounted) return;
             try {
                 await pc.setRemoteDescription(new RTCSessionDescription(answer));
             } catch (e) {
@@ -90,8 +123,8 @@ export function useWebRTC({ stream, roomName }: UseWebRTCProps) {
             }
         };
 
-        // ICE Candidate 수신 후 브라우저에 등록
         const handleIce = async (ice: RTCIceCandidateInit) => {
+            if (!mounted) return;
             try {
                 await pc.addIceCandidate(new RTCIceCandidate(ice));
             } catch (e) {
@@ -109,19 +142,24 @@ export function useWebRTC({ stream, roomName }: UseWebRTCProps) {
 
         // Cleanup
         return () => {
+            mounted = false;
+
+            // 1. 이벤트 리스너 먼저 제거 (stale 콜백 방지)
             videoSocket.off("welcome", createAndSendOffer);
             videoSocket.off("offer", handleOffer);
             videoSocket.off("answer", handleAnswer);
             videoSocket.off("ice", handleIce);
 
+            // 2. PeerConnection 닫기
             pc.close();
             peerConnectionRef.current = null;
 
-            // Hook이 언마운트되거나 roomName이 바뀔 때 disconnect (선택 사항)
-            // 여기서는 명시적으로 disconnect 해주는 것이 안전함
+            // 3. 소켓 연결 해제
             videoSocket.disconnect();
+            setConnectionStatus("disconnected");
         };
     }, [stream, roomName]);
 
-    return { remoteStream };
+    return { remoteStream, connectionStatus };
 }
+

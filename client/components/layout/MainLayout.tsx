@@ -33,11 +33,7 @@ function MainLayoutContent({ children }: { children: React.ReactNode }) {
         <>
             <Header />
             <div className={styles.container}>
-                {/* 배경 효과 */}
-                <div className={styles.backgroundDecoration}>
-                    <div className={`${styles.blurCircle} ${styles.blurCircle3}`}></div>
-                </div>
-                <div className={styles.noiseOverlay}></div>
+
 
                 {isLoggedIn && (
                     <div className={styles.sideButtons}>

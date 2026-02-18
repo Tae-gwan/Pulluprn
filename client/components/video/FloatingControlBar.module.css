@@ -1,0 +1,124 @@
+/* 뉴모피즘(Neumorphism) 기반 컨트롤 바 */
+.controlSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px 24px;
+    gap: 12px;
+    background: #ECECEC;
+    border-radius: 24px 24px 0 0;
+}
+
+/* 버튼 행 */
+.controlsRow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+
+/* 버튼 래퍼 */
+.buttonWrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* 버튼 기본 = ON 상태 */
+.button {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: none;
+    background: #f0f0f0;
+    color: #555;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid rgb(222, 222, 222);
+    box-shadow:
+        4px 4px 6px rgba(163, 163, 163, 0.5),
+        -4px -4px 6px rgba(255, 255, 255, 0.9),
+        0 0 8px rgba(255, 107, 53, 0.3);
+    transition: all 0.2s ease;
+}
+
+.button:hover {
+    box-shadow:
+        3px 3px 4px rgba(163, 163, 163, 0.5),
+        -3px -3px 4px rgba(255, 255, 255, 0.9),
+        0 0 6px rgba(255, 107, 53, 0.25);
+}
+
+.button:active {
+    background: #e9e9e9;
+    border: 2px solid rgba(223, 223, 223, 0.372);
+    box-shadow:
+        inset 3px 3px 6px rgba(163, 163, 163, 0.5),
+        inset -3px -3px 6px rgba(255, 255, 255, 0.8);
+    transform: translateY(-0.5px);
+}
+
+/* 눌린 상태 (inset shadow) */
+.buttonActive {
+    background: #e2e2e2;
+    border: 2px solid rgba(223, 223, 223, 0.372);
+    color: #c19787;
+    box-shadow:
+        inset 4px 4px 8px rgba(163, 163, 163, 0.4),
+        inset -4px -4px 8px rgba(255, 255, 255, 0.8);
+}
+
+.buttonActive:hover {
+    box-shadow:
+        inset 4px 4px 8px rgba(163, 163, 163, 0.4),
+        inset -4px -4px 8px rgba(255, 255, 255, 0.8);
+}
+
+/* 통화 종료 버튼 */
+.endButton {
+    background: #ff703c;
+    color: #fff;
+    box-shadow:
+        4px 4px 8px rgba(163, 163, 163, 0.6),
+        -4px -4px 8px rgba(255, 255, 255, 0.8);
+}
+
+.endButton:hover {
+    background: #FF6B35;
+    box-shadow:
+        2px 2px 4px rgba(163, 163, 163, 0.6),
+        -2px -2px 4px rgba(255, 255, 255, 0.8);
+    transform: translateY(0.5px);
+}
+
+.endButton:active {
+    box-shadow:
+        inset 2px 2px 4px rgba(0, 0, 0, 0.2),
+        inset -2px -2px 4px rgba(255, 255, 255, 0.2);
+    transform: translateY(1px);
+}
+
+/* 모바일 대응 */
+@media (max-width: 768px) {
+    .controlSection {
+        padding: 8px 12px;
+        gap: 6px;
+    }
+
+    .controlsRow {
+        gap: 10px;
+    }
+
+    .button {
+        width: 42px;
+        height: 42px;
+    }
+
+    .button svg {
+        width: 18px;
+        height: 18px;
+    }
+}

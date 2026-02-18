@@ -7,39 +7,48 @@ import { socketService } from '@/services/socketService';
 import { sortMessagesByTimestamp } from '@/utils/messageUtils';
 import type { Message } from '@/types/message';
 
-interface UseChatRoomOptions {
+interface UseChatOptions {
     roomId: string | null;
 }
 
-interface UseChatRoomReturn {
+interface UseChatReturn {
+    // 메시지 관련
     messages: Message[];
     sortedMessages: Message[];
     isTyping: boolean;
     textWindowRef: React.RefObject<HTMLDivElement | null>;
+    // 입력 관련
+    inputValue: string;
+    setInputValue: (value: string) => void;
+    handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+    handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 /**
- * 채팅방을 관리하는 Hook
- * - 메시지 수신
- * - 타이핑 인디케이터
- * - 이전 메시지 불러오기
- * - 메시지 전송은 useMessageInput에서 관리함.
+ * 채팅방 전체 로직을 관리하는 Hook
+ * - 메시지 수신 + 이전 메시지 로드
+ * - 메시지 입력 + 전송
+ * - 타이핑 인디케이터 (수신 + 발신)
  */
-export function useChatRoom({ roomId }: UseChatRoomOptions): UseChatRoomReturn {
-    const { userId } = useSessionContext();
+export function useChat({ roomId }: UseChatOptions): UseChatReturn {
+    const { userId, username } = useSessionContext();
     const router = useRouter();
 
+    // ─── 메시지 상태 ───
     const [messages, setMessages] = useState<Message[]>([]);
     const [isTyping, setIsTyping] = useState(false);
     const [isLoadingMessages, setIsLoadingMessages] = useState(false);
 
     const textWindowRef = useRef<HTMLDivElement>(null);
-    const loadedMessageIdsRef = useRef<Set<string>>(new Set()); // 중복 방지용
+    const loadedMessageIdsRef = useRef<Set<string>>(new Set());
 
-    // 메시지를 시간 순서대로 정렬
     const sortedMessages = sortMessagesByTimestamp(messages);
 
-    // 이전 메시지 불러오기
+    // ─── 입력 상태 ───
+    const [inputValue, setInputValue] = useState('');
+    const lastTypingEmitRef = useRef<number>(0);
+
+    // ─── 이전 메시지 불러오기 ───
     const loadPreviousMessages = useCallback(async (friendId: string) => {
         if (!friendId || isLoadingMessages) return;
 
@@ -58,12 +67,10 @@ export function useChatRoom({ roomId }: UseChatRoomOptions): UseChatRoomReturn {
                 timestamp: msg.timestamp
             }));
 
-            // 실시간으로 받은 메시지와 중복 방지
             const newMessages = loadedMessageIdsRef.current.size > 0
                 ? loadedMessages.filter(msg => !loadedMessageIdsRef.current.has(msg.id))
                 : loadedMessages;
 
-            // 모든 새 메시지의 ID를 loadedMessageIdsRef에 추가
             newMessages.forEach(msg => loadedMessageIdsRef.current.add(msg.id));
 
             setMessages(prev => {
@@ -79,36 +86,25 @@ export function useChatRoom({ roomId }: UseChatRoomOptions): UseChatRoomReturn {
         }
     }, []);
 
-    // 채팅방 변경 시 메시지 초기화 및 이벤트 등록
+    // ─── 채팅방 변경 시 메시지 초기화 및 이벤트 등록 ───
     useEffect(() => {
-        // 친구가 변경되면 메시지 초기화
         setMessages([]);
         loadedMessageIdsRef.current.clear();
+        setInputValue('');
 
-        if (!roomId) {
-            return;
-        }
+        if (!roomId) return;
 
-        // userId가 없으면 오류 페이지로 이동
         if (!userId) {
             router.push('/error');
             return;
         }
 
-        // Socket이 연결되어 있지 않으면 리턴
-        if (!socketService.isConnected()) {
-            return;
-        }
+        if (!socketService.isConnected()) return;
 
-        // 이전 메시지 불러오기
         loadPreviousMessages(roomId);
 
-        // 이벤트 핸들러 정의
         const handleMyMessage = (message: Message) => {
-            // 현재 채팅방의 메시지만 처리
             if (message.receiverId !== roomId) return;
-
-            // 중복 체크
             if (!loadedMessageIdsRef.current.has(message.id)) {
                 loadedMessageIdsRef.current.add(message.id);
                 setMessages(prev => [...prev, message]);
@@ -116,31 +112,21 @@ export function useChatRoom({ roomId }: UseChatRoomOptions): UseChatRoomReturn {
         };
 
         const handleOtherMessage = (message: Message) => {
-            // 현재 채팅방의 메시지만 처리
             if (message.senderId !== roomId) return;
-
-            // 중복 체크
             if (!loadedMessageIdsRef.current.has(message.id)) {
                 loadedMessageIdsRef.current.add(message.id);
                 setMessages(prev => [...prev, message]);
             }
         };
 
-        const handleTyping = () => {
-            setIsTyping(true);
-        };
+        const handleTyping = () => setIsTyping(true);
+        const handleStopTyping = () => setIsTyping(false);
 
-        const handleStopTyping = () => {
-            setIsTyping(false);
-        };
-
-        // 이벤트 등록
         socketService.onMyMessage(handleMyMessage);
         socketService.onOtherMessage(handleOtherMessage);
         socketService.onTyping(handleTyping);
         socketService.onStopTyping(handleStopTyping);
 
-        // cleanup - 등록한 이벤트만 제거
         return () => {
             const socket = socketService.getSocket();
             if (socket) {
@@ -152,17 +138,59 @@ export function useChatRoom({ roomId }: UseChatRoomOptions): UseChatRoomReturn {
         };
     }, [roomId, userId, router, loadPreviousMessages]);
 
-    // 메시지가 추가되거나 타이핑 인디케이터가 표시될 때마다 스크롤을 맨 아래로 이동
+    // ─── 스크롤 자동 이동 ───
     useEffect(() => {
         if (textWindowRef.current) {
             textWindowRef.current.scrollTop = textWindowRef.current.scrollHeight;
         }
     }, [messages, isTyping]);
 
+    // ─── 메시지 전송 ───
+    const handleSubmit = useCallback(
+        (e: React.FormEvent<HTMLFormElement>) => {
+            e.preventDefault();
+
+            if (inputValue.trim() !== '' && socketService.isConnected() && roomId && username) {
+                const messageText = inputValue.trim();
+                socketService.sendMessage(messageText, username, roomId);
+                socketService.clearTypingTimer();
+                socketService.emitStopTyping();
+            }
+            setInputValue('');
+        },
+        [inputValue, username, roomId]
+    );
+
+    // ─── 입력 변경 + 타이핑 이벤트 ───
+    const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        setInputValue(value);
+
+        if (!socketService.isConnected()) return;
+
+        if (!value.trim()) {
+            socketService.clearTypingTimer();
+            socketService.emitStopTyping();
+            return;
+        }
+
+        const now = Date.now();
+        if (now - lastTypingEmitRef.current >= 3000) {
+            socketService.emitTyping();
+            lastTypingEmitRef.current = now;
+        }
+
+        socketService.startTypingTimer();
+    }, []);
+
     return {
         messages,
         sortedMessages,
         isTyping,
         textWindowRef,
+        inputValue,
+        setInputValue,
+        handleSubmit,
+        handleInputChange,
     };
 }

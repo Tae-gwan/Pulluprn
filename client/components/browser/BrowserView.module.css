@@ -1,0 +1,55 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    background-color: #f0f0f0;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.controls {
+    display: flex;
+    gap: 10px;
+    padding: 10px;
+    background-color: #fff;
+    border-bottom: 1px solid #ddd;
+    align-items: center;
+}
+
+.urlInput {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    font-size: 14px;
+}
+
+.viewPort {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    background-color: #333;
+    position: relative;
+    outline: none;
+}
+
+.viewPort:focus-visible {
+    box-shadow: inset 0 0 0 2px rgba(100, 149, 237, 0.6);
+}
+
+.browserImage {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    cursor: crosshair;
+}
+
+.loading {
+    color: #fff;
+    font-size: 1.2rem;
+    margin-top: 20%;
+}

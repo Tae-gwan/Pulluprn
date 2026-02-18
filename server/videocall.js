@@ -38,6 +38,8 @@ io.on("connection", (socket) => {
     }
 
     socket.join(roomName);
+    // 소켓에 방 이름 저장 (disconnect 시 정리용)
+    socket.data.roomName = roomName;
     console.log(`📁 Socket ${socket.id} joined video room: ${roomName}`);
 
     // 이미 방에 있던 사람들에게 "새 참가자" 알림
@@ -65,9 +67,21 @@ io.on("connection", (socket) => {
     socket.to(roomName).emit("ice", ice);
   });
 
-  // 5. 연결 종료 로그
+  // 5. 연결 종료 → 방 정리
   socket.on("disconnect", () => {
     console.log(`❌ VideoCall socket disconnected: ${socket.id}`);
+
+    const roomName = socket.data.roomName;
+    if (!roomName) return;
+
+    // 상대방에게 피어 이탈 알림
+    socket.to(roomName).emit("peer_left");
+
+    // 방에 남은 인원 확인
+    const room = io.sockets.adapter.rooms.get(roomName);
+    if (!room || room.size === 0) {
+      console.log(`🧹 Video room "${roomName}" is now empty — cleaned up`);
+    }
   });
 });
 

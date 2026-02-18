@@ -1,0 +1,126 @@
+/* 오버레이: 반투명 배경 */
+.overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(2px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+}
+
+/* 설정 패널 - 뉴모피즘 */
+.panel {
+    background: #ECECEC;
+    border-radius: 24px;
+    padding: 24px;
+    min-width: 320px;
+    max-width: 400px;
+    box-shadow:
+        12px 12px 24px rgba(163, 163, 163, 0.4),
+        -12px -12px 24px rgba(255, 255, 255, 0.9);
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+/* 헤더 */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    text-shadow:
+        2px 2px 4px rgba(163, 163, 163, 0.4),
+        -2px -2px 4px rgba(255, 255, 255, 0.7);
+}
+
+.closeButton {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    background: #ECECEC;
+    color: #999;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow:
+        3px 3px 6px rgba(163, 163, 163, 0.4),
+        -3px -3px 6px rgba(255, 255, 255, 0.8);
+    transition: all 0.2s ease;
+}
+
+.closeButton:hover {
+    box-shadow:
+        inset 2px 2px 4px rgba(163, 163, 163, 0.4),
+        inset -2px -2px 4px rgba(255, 255, 255, 0.8);
+    color: #ff703c;
+}
+
+/* 장치 그룹 */
+.deviceGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #666;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* 드롭다운 셀렉트 - 뉴모피즘 Inset */
+.select {
+    width: 100%;
+    padding: 10px 14px;
+    border: none;
+    border-radius: 12px;
+    background: #ECECEC;
+    color: #333;
+    font-size: 0.85rem;
+    outline: none;
+    cursor: pointer;
+    box-shadow:
+        inset 4px 4px 8px rgba(163, 163, 163, 0.35),
+        inset -4px -4px 8px rgba(255, 255, 255, 0.8);
+    transition: all 0.2s ease;
+    -webkit-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 32px;
+}
+
+.select:focus {
+    box-shadow:
+        inset 5px 5px 10px rgba(163, 163, 163, 0.4),
+        inset -5px -5px 10px rgba(255, 255, 255, 0.9);
+}
+
+/* 모바일 대응 */
+@media (max-width: 768px) {
+    .panel {
+        min-width: 280px;
+        padding: 18px;
+        gap: 14px;
+        margin: 0 16px;
+    }
+}

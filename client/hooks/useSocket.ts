@@ -6,7 +6,7 @@ import { socketService } from '@/services/socketService';
 
 /**
  * Socket 연결을 관리하는 Hook
- * 앱 전체에서 한 번만 연결하고, 연결 상태를 관리합니다.
+ * 앱 전체에서 한 번만 연결하고, 연결 상태를 관리함.
  */
 export function useSocketConnection() {
     const { email, username, userId, isLoggedIn } = useSessionContext();

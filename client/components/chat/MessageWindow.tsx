@@ -3,7 +3,7 @@
 import { Fragment, useRef, memo } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './MessageWindow.module.css';
-import { useChatRoom } from '@/hooks/useChatRoom';
+import { useChat } from '@/hooks/useChat';
 import { shouldShowName } from '@/utils/messageUtils';
 import { SelectedFriend } from './types';
 import MessageInput from './MessageInput';
@@ -20,7 +20,10 @@ const MessageWindow = memo(function MessageWindow({ selectedFriend }: MessageWin
         sortedMessages,
         isTyping,
         textWindowRef,
-    } = useChatRoom({
+        inputValue,
+        handleSubmit,
+        handleInputChange,
+    } = useChat({
         roomId: selectedFriend?.id || null,
     });
 
@@ -72,8 +75,10 @@ const MessageWindow = memo(function MessageWindow({ selectedFriend }: MessageWin
                             )}
                         </ul>
                     </div>
-                    <MessageInput 
-                        selectedFriend={selectedFriend}
+                    <MessageInput
+                        inputValue={inputValue}
+                        handleSubmit={handleSubmit}
+                        handleInputChange={handleInputChange}
                     />
                 </>
             ) : (

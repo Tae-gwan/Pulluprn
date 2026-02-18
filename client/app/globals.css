@@ -3,6 +3,7 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --bg-primary: #ECECEC;
 }
 
 @theme inline {
@@ -26,13 +27,14 @@ html {
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+
   /* 터치 스크롤 부드럽게 */
   -webkit-overflow-scrolling: touch;
 }
 
 /* 터치 타겟: 네비/헤더 버튼만 최소 크기 (모바일 접근성) */
 @media (max-width: 768px) {
+
   .nav button,
   .nav a {
     min-height: 44px;

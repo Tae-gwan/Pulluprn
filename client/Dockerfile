@@ -1,14 +1,26 @@
-# 1. 빌드
-FROM node:22-alpine AS builder
+# 1. Base (공통 의존성 설치)
+FROM node:22-alpine AS base
 
 WORKDIR /app
 
 # OpenSSL 설치 (Prisma 필수)
 RUN apk add --no-cache openssl
 
-# 의존성 설치
+# 2. Dev (개발용 - 의존성 설치, Debian 기반으로 SWC 호환성 확보)
+FROM node:22 AS dev
+WORKDIR /app
 COPY client/package*.json ./
 COPY prisma ./prisma/
+# 개발용이므로 npm install (devDependencies 포함)
+RUN npm install
+# 소스 코드는 볼륨 마운트로 대체되므로 COPY 불필요
+
+# 3. Builder (빌드)
+FROM base AS builder
+COPY prisma ./prisma/
+
+# 의존성 설치를 위해 package.json과 lock 파일 복사
+COPY client/package*.json ./
 
 # 의존성 설치
 RUN npm ci
@@ -26,8 +38,10 @@ RUN npx prisma generate --schema=./prisma/schema.prisma
 # Build time args
 ARG NEXT_PUBLIC_SOCKET_URL
 ARG NEXT_PUBLIC_VIDEO_SOCKET_URL
+ARG NEXT_PUBLIC_BROWSER_SOCKET_URL
 ENV NEXT_PUBLIC_SOCKET_URL=${NEXT_PUBLIC_SOCKET_URL}
 ENV NEXT_PUBLIC_VIDEO_SOCKET_URL=${NEXT_PUBLIC_VIDEO_SOCKET_URL}
+ENV NEXT_PUBLIC_BROWSER_SOCKET_URL=${NEXT_PUBLIC_BROWSER_SOCKET_URL}
 
 # Next.js 빌드
 RUN npm run build
