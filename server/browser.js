@@ -2,6 +2,7 @@ const { chromium } = require('playwright');
 const { Server } = require('socket.io');
 
 const io = new Server(3003, {
+    path: '/browser/socket.io',
     cors: {
         origin: "*", // 실운영 시 클라이언트 도메인으로 제한 필요
         methods: ["GET", "POST"]
