@@ -6,14 +6,12 @@ import { socketService } from '@/services/socketService';
 import { ChatRoom } from '@/components/chat/types';
 
 /**
- * 대화 목록을 관리하는 Hook
+ * 메시지 목록을 관리하는 Hook
  * - API로 초기 데이터 가져오기
  * - Socket 이벤트로 실시간 마지막 메시지 업데이트
- * 
- * 주의:
- * - 온라인 상태는 useOnlineUsers에서 별도로 관리합니다.
  */
-export function useConversations() {
+
+export function useChatList() {
     const [chatRooms, setChatRooms] = useState<ChatRoom[]>([]);
     const { email, userId } = useSessionContext();
 
@@ -26,7 +24,6 @@ export function useConversations() {
                 const response = await fetch("/api/messages/conversations");
                 if (response.ok) {
                     const data = await response.json();
-                    // conversations를 ChatRoom 형식으로 변환
                     const rooms: ChatRoom[] = (data.conversations || []).map((conv: {
                         friend: { id: string; name: string | null; image: string | null; status: "online" | "offline" };
                         lastMessage: { text: string; timestamp: number } | null;

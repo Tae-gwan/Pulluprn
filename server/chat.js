@@ -114,16 +114,9 @@ io.on('connection', async (socket) => {
 
     socket.on('chat message', async ({ message, username, receiverId }) => {
         try {
-            // receiverId가 없으면 브로드캐스트만 (기존 동작)
+            // receiverId가 없으면 조기 종료 (1:1 채팅이므로 에러 처리)
             if (!userId || !receiverId) {
-                socket.emit('my message', {
-                    message: message,
-                    username: username
-                });
-                socket.broadcast.emit('other message', {
-                    message: message,
-                    username: username
-                });
+                console.error('채팅 에러: 발신자 또는 수신자 ID가 없습니다.', { userId, receiverId });
                 return;
             }
 

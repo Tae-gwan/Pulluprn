@@ -2,15 +2,15 @@
 
 import { useState, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import styles from './ConversationList.module.css';
-import { useOnlineUsers } from '@/hooks/useOnlineUsers';
-import { useConversations } from '@/hooks/useConversations';
+import styles from './ChatList.module.css';
+import { useOnlineUsers } from '@/hooks/user/useOnlineUsers';
+import { useChatList } from '@/hooks/chat/useChatList';
 
-export default function ConversationList() {
+export default function ChatList() {
     const pathname = usePathname();
     const router = useRouter();
     const [optimisticActiveId, setOptimisticActiveId] = useState<string | null>(null);
-    const { chatRooms } = useConversations();
+    const { chatRooms } = useChatList();
     const { isUserOnline } = useOnlineUsers();
 
     // Pathname이 변경되면 낙관적 상태 초기화 (실제 네비게이션 완료 시)

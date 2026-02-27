@@ -1,0 +1,19 @@
+services:
+  server-browser:
+    build:
+      context: ./server
+      dockerfile: Dockerfile.browser
+    container_name: pulluprn-browser
+    restart: unless-stopped
+    ports:
+      - "3003:3003"
+    environment:
+      - PORT=3003
+      # 필요하다면 CORS 설정을 위한 클라이언트 URL 추가 (현재 browser.js는 * 허용 상태)
+      # - CORS_ORIGIN=https://www.pulluprn.com
+      # 오라클 리소스 제한 설정 (선택 사항)
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 4G

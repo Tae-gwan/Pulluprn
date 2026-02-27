@@ -6,7 +6,7 @@ import styles from "./MainLayout.module.css";
 import LeftButtonLayout from "@/components/layout/LeftButtonLayout";
 import RightButtonLayout from "@/components/layout/RightButtonLayout";
 import Header from "@/components/layout/header";
-import { useSocketConnection } from "@/hooks/useSocket";
+import { useSocketConnection } from "@/hooks/socket/useSocket";
 import { SessionProvider, useSessionContext } from "@/context/SessionContext";
 
 function MainLayoutContent({ children }: { children: React.ReactNode }) {

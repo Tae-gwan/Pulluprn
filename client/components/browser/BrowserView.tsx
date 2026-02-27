@@ -35,6 +35,7 @@ const BrowserView: React.FC<BrowserViewProps> = ({ roomName, onClose }) => {
     const imgRef = useRef<HTMLImageElement>(null);
     const socketRef = useRef<Socket | null>(null);
     const viewPortRef = useRef<HTMLDivElement>(null);
+    const isComposingRef = useRef(false); // 한글 IME 조합 상태 추적
 
     useEffect(() => {
         const socketUrl = process.env.NEXT_PUBLIC_BROWSER_SOCKET_URL || 'http://localhost:3003';
@@ -51,12 +52,24 @@ const BrowserView: React.FC<BrowserViewProps> = ({ roomName, onClose }) => {
             socket.emit('join_browser', { roomName });
         });
 
-        socket.on('frame', (base64Image: string) => {
-            setImageSrc(`data:image/jpeg;base64,${base64Image}`);
+        socket.on('frame', (buffer: ArrayBuffer) => {
+            const blob = new Blob([buffer], { type: 'image/jpeg' });
+            setImageSrc((prev) => {
+                if (prev && prev.startsWith('blob:')) {
+                    URL.revokeObjectURL(prev);
+                }
+                return URL.createObjectURL(blob);
+            });
         });
 
         return () => {
             socket.disconnect();
+            setImageSrc((prev) => {
+                if (prev && prev.startsWith('blob:')) {
+                    URL.revokeObjectURL(prev);
+                }
+                return null;
+            });
         };
     }, [roomName]);
 
@@ -85,37 +98,51 @@ const BrowserView: React.FC<BrowserViewProps> = ({ roomName, onClose }) => {
     const handleViewportKeyDown = useCallback((e: React.KeyboardEvent<HTMLDivElement>) => {
         if (!socketRef.current) return;
 
+        // 한글 IME 조합 중이면 무시 (compositionend에서 처리)
+        // keyCode 229: IME processing key (대부분의 브라우저에서 한글 입력 시 발생)
+        if (isComposingRef.current || e.nativeEvent.isComposing || e.keyCode === 229) return;
+
         // 브라우저 기본 동작 방지 (스크롤, 뒤로가기 등)
         e.preventDefault();
 
-        // Ctrl/Cmd 조합 키 처리 (복사, 붙여넣기, 전체선택 등)
-        if (e.ctrlKey || e.metaKey) {
-            const comboKey = `Control+${e.key}`;
-            socketRef.current.emit('control_event', {
-                roomName,
-                type: 'key_press',
-                key: comboKey,
-            });
-            return;
-        }
+        // 모든 키를 key_down으로 전송 (특수키 포함)
+        // Playwright는 key 이름(e.key)을 그대로 인식함 (Enter, ArrowLeft, a, b, etc.)
+        socketRef.current.emit('control_event', {
+            roomName,
+            type: 'key_down',
+            key: e.key,
+        });
+    }, [roomName]);
 
-        // 특수 키 (Enter, Backspace, 방향키 등)
-        const specialKey = SPECIAL_KEYS[e.key];
-        if (specialKey) {
-            socketRef.current.emit('control_event', {
-                roomName,
-                type: 'key_press',
-                key: specialKey,
-            });
-            return;
-        }
+    // 키 떼기 이벤트 → 게임 등에서 키 홀드/릴리스 구분 필요
+    const handleViewportKeyUp = useCallback((e: React.KeyboardEvent<HTMLDivElement>) => {
+        if (!socketRef.current) return;
+        if (isComposingRef.current || e.nativeEvent.isComposing || e.keyCode === 229) return;
+        e.preventDefault();
 
-        // 일반 문자 입력 (한 글자씩)
-        if (e.key.length === 1) {
+        // 모든 키를 key_up으로 전송
+        socketRef.current.emit('control_event', {
+            roomName,
+            type: 'key_up',
+            key: e.key,
+        });
+    }, [roomName]);
+
+    // 한글 IME 조합 시작
+    const handleCompositionStart = useCallback(() => {
+        isComposingRef.current = true;
+    }, []);
+
+    // 한글 IME 조합 완료 시 전송
+    const handleCompositionEnd = useCallback((e: React.CompositionEvent<HTMLDivElement>) => {
+        isComposingRef.current = false;
+        if (!socketRef.current) return;
+        const text = e.data;
+        if (text) {
             socketRef.current.emit('control_event', {
                 roomName,
                 type: 'type',
-                text: e.key,
+                text,
             });
         }
     }, [roomName]);
@@ -153,6 +180,14 @@ const BrowserView: React.FC<BrowserViewProps> = ({ roomName, onClose }) => {
         });
     }, [roomName]);
 
+    const [fps, setFps] = useState(60);
+
+    const toggleFps = useCallback(() => {
+        const newFps = fps === 60 ? 30 : 60;
+        setFps(newFps);
+        socketRef.current?.emit('change_fps', { roomName, fps: newFps });
+    }, [fps, roomName]);
+
     return (
         <div className={styles.container} onWheel={handleWheel}>
             {/* 상단 주소창 */}
@@ -164,6 +199,22 @@ const BrowserView: React.FC<BrowserViewProps> = ({ roomName, onClose }) => {
                 />
                 <button onClick={() => socketRef.current?.emit('control_event', { roomName, type: 'back' })}>Back</button>
                 <button onClick={() => socketRef.current?.emit('control_event', { roomName, type: 'reload' })}>Refresh</button>
+                <button
+                    onClick={toggleFps}
+                    style={{
+                        marginLeft: '5px',
+                        fontSize: '12px',
+                        padding: '2px 6px',
+                        backgroundColor: fps === 60 ? '#e67e22' : '#95a5a6',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '4px',
+                        cursor: 'pointer'
+                    }}
+                    title={`Switch to ${fps === 60 ? '30' : '60'} FPS`}
+                >
+                    {fps} FPS
+                </button>
                 <button
                     onClick={() => {
                         // 서버에 브라우저 세션 종료 요청
@@ -183,6 +234,9 @@ const BrowserView: React.FC<BrowserViewProps> = ({ roomName, onClose }) => {
                 className={styles.viewPort}
                 tabIndex={0}
                 onKeyDown={handleViewportKeyDown}
+                onKeyUp={handleViewportKeyUp}
+                onCompositionStart={handleCompositionStart}
+                onCompositionEnd={handleCompositionEnd}
             >
                 {imageSrc ? (
                     <img

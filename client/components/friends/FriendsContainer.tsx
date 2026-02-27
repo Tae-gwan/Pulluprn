@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from "react";
 import { useSessionContext } from "@/context/SessionContext";
 import Link from "next/link";
 import styles from "./FriendsContainer.module.css";
-import { useOnlineUsers } from "@/hooks/useOnlineUsers";
+import { useOnlineUsers } from "@/hooks/user/useOnlineUsers";
 import FriendItem from "./FriendItem";
 
 interface Friend {

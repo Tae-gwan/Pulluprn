@@ -21,57 +21,47 @@ interface UseMessageInputReturn {
  * - 메시지 전송
  * - 타이핑 인디케이터 관리
  */
+
 export function useMessageInput({
     roomId,
 }: UseMessageInputOptions): UseMessageInputReturn {
     const { username } = useSessionContext();
     const [inputValue, setInputValue] = useState('');
 
-    // 폼 제출 핸들러
-    const handleSubmit = useCallback(
-        (e: React.FormEvent<HTMLFormElement>) => {
-            e.preventDefault();
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
 
-            if (inputValue.trim() !== '' && socketService.isConnected() && roomId && username) {
-                const messageText = inputValue.trim();
-                socketService.sendMessage(messageText, username, roomId);
+        if (inputValue.trim() !== '' && socketService.isConnected() && roomId && username) {
+            const messageText = inputValue.trim();
+            socketService.sendMessage(messageText, username, roomId);
+            socketService.clearTypingTimer();
+            socketService.emitStopTyping();
+        }
+        setInputValue('');
+    };
 
-                // 타이핑 타이머 클리어 및 stop typing 전송
-                socketService.clearTypingTimer();
-                socketService.emitStopTyping();
-            }
-            setInputValue('');
-        },
-        [inputValue, username, roomId]
-    );
-
-    // 타이핑 이벤트 쓰로틀링을 위한 Ref
     const lastTypingEmitRef = useRef<number>(0);
 
-    // 입력 변경 핸들러
-    const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
         setInputValue(value);
 
         if (!socketService.isConnected()) return;
 
-        // 입력란이 비어있으면 stop typing 전송
         if (!value.trim()) {
             socketService.clearTypingTimer();
             socketService.emitStopTyping();
             return;
         }
 
-        // 3초에 한 번만 타이핑 시작 이벤트 전송 (쓰로틀링)
         const now = Date.now();
         if (now - lastTypingEmitRef.current >= 3000) {
             socketService.emitTyping();
             lastTypingEmitRef.current = now;
         }
 
-        // stop typing 타이머는 매 입력마다 재설정 (Debounce)
         socketService.startTypingTimer();
-    }, []);
+    };
 
     return {
         inputValue,

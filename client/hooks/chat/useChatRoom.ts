@@ -7,48 +7,38 @@ import { socketService } from '@/services/socketService';
 import { sortMessagesByTimestamp } from '@/utils/messageUtils';
 import type { Message } from '@/types/message';
 
-interface UseChatOptions {
+interface UseChatRoomOptions {
     roomId: string | null;
 }
 
-interface UseChatReturn {
-    // 메시지 관련
+interface UseChatRoomReturn {
     messages: Message[];
     sortedMessages: Message[];
     isTyping: boolean;
     textWindowRef: React.RefObject<HTMLDivElement | null>;
-    // 입력 관련
-    inputValue: string;
-    setInputValue: (value: string) => void;
-    handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
-    handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 /**
- * 채팅방 전체 로직을 관리하는 Hook
- * - 메시지 수신 + 이전 메시지 로드
- * - 메시지 입력 + 전송
- * - 타이핑 인디케이터 (수신 + 발신)
+ * 채팅방을 관리하는 Hook
+ * - 메시지 수신
+ * - 타이핑 인디케이터
+ * - 이전 메시지 불러오기
  */
-export function useChat({ roomId }: UseChatOptions): UseChatReturn {
-    const { userId, username } = useSessionContext();
+export function useChatRoom({ roomId }: UseChatRoomOptions): UseChatRoomReturn {
+    const { userId } = useSessionContext();
     const router = useRouter();
 
-    // ─── 메시지 상태 ───
     const [messages, setMessages] = useState<Message[]>([]);
     const [isTyping, setIsTyping] = useState(false);
     const [isLoadingMessages, setIsLoadingMessages] = useState(false);
 
     const textWindowRef = useRef<HTMLDivElement>(null);
-    const loadedMessageIdsRef = useRef<Set<string>>(new Set());
+    const loadedMessageIdsRef = useRef<Set<string>>(new Set()); // 중복 방지용
 
+    // 메시지를 시간 순서대로 정렬
     const sortedMessages = sortMessagesByTimestamp(messages);
 
-    // ─── 입력 상태 ───
-    const [inputValue, setInputValue] = useState('');
-    const lastTypingEmitRef = useRef<number>(0);
-
-    // ─── 이전 메시지 불러오기 ───
+    // 이전 메시지 불러오기
     const loadPreviousMessages = useCallback(async (friendId: string) => {
         if (!friendId || isLoadingMessages) return;
 
@@ -67,10 +57,12 @@ export function useChat({ roomId }: UseChatOptions): UseChatReturn {
                 timestamp: msg.timestamp
             }));
 
+            // 실시간으로 받은 메시지와 중복 방지
             const newMessages = loadedMessageIdsRef.current.size > 0
                 ? loadedMessages.filter(msg => !loadedMessageIdsRef.current.has(msg.id))
                 : loadedMessages;
 
+            // 모든 새 메시지의 ID를 loadedMessageIdsRef에 추가
             newMessages.forEach(msg => loadedMessageIdsRef.current.add(msg.id));
 
             setMessages(prev => {
@@ -86,25 +78,32 @@ export function useChat({ roomId }: UseChatOptions): UseChatReturn {
         }
     }, []);
 
-    // ─── 채팅방 변경 시 메시지 초기화 및 이벤트 등록 ───
+    // 채팅방 변경 시 메시지 초기화 및 이벤트 등록
     useEffect(() => {
         setMessages([]);
         loadedMessageIdsRef.current.clear();
-        setInputValue('');
 
-        if (!roomId) return;
+        if (!roomId) {
+            return;
+        }
 
+        // userId가 없으면 오류 페이지로 이동
         if (!userId) {
             router.push('/error');
             return;
         }
 
-        if (!socketService.isConnected()) return;
+        // Socket이 연결되어 있지 않으면 리턴
+        if (!socketService.isConnected()) {
+            return;
+        }
 
+        // 이전 메시지 불러오기
         loadPreviousMessages(roomId);
 
         const handleMyMessage = (message: Message) => {
             if (message.receiverId !== roomId) return;
+
             if (!loadedMessageIdsRef.current.has(message.id)) {
                 loadedMessageIdsRef.current.add(message.id);
                 setMessages(prev => [...prev, message]);
@@ -113,14 +112,20 @@ export function useChat({ roomId }: UseChatOptions): UseChatReturn {
 
         const handleOtherMessage = (message: Message) => {
             if (message.senderId !== roomId) return;
+
             if (!loadedMessageIdsRef.current.has(message.id)) {
                 loadedMessageIdsRef.current.add(message.id);
                 setMessages(prev => [...prev, message]);
             }
         };
 
-        const handleTyping = () => setIsTyping(true);
-        const handleStopTyping = () => setIsTyping(false);
+        const handleTyping = () => {
+            setIsTyping(true);
+        };
+
+        const handleStopTyping = () => {
+            setIsTyping(false);
+        };
 
         socketService.onMyMessage(handleMyMessage);
         socketService.onOtherMessage(handleOtherMessage);
@@ -138,59 +143,16 @@ export function useChat({ roomId }: UseChatOptions): UseChatReturn {
         };
     }, [roomId, userId, router, loadPreviousMessages]);
 
-    // ─── 스크롤 자동 이동 ───
     useEffect(() => {
         if (textWindowRef.current) {
             textWindowRef.current.scrollTop = textWindowRef.current.scrollHeight;
         }
     }, [messages, isTyping]);
 
-    // ─── 메시지 전송 ───
-    const handleSubmit = useCallback(
-        (e: React.FormEvent<HTMLFormElement>) => {
-            e.preventDefault();
-
-            if (inputValue.trim() !== '' && socketService.isConnected() && roomId && username) {
-                const messageText = inputValue.trim();
-                socketService.sendMessage(messageText, username, roomId);
-                socketService.clearTypingTimer();
-                socketService.emitStopTyping();
-            }
-            setInputValue('');
-        },
-        [inputValue, username, roomId]
-    );
-
-    // ─── 입력 변경 + 타이핑 이벤트 ───
-    const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value;
-        setInputValue(value);
-
-        if (!socketService.isConnected()) return;
-
-        if (!value.trim()) {
-            socketService.clearTypingTimer();
-            socketService.emitStopTyping();
-            return;
-        }
-
-        const now = Date.now();
-        if (now - lastTypingEmitRef.current >= 3000) {
-            socketService.emitTyping();
-            lastTypingEmitRef.current = now;
-        }
-
-        socketService.startTypingTimer();
-    }, []);
-
     return {
         messages,
         sortedMessages,
         isTyping,
         textWindowRef,
-        inputValue,
-        setInputValue,
-        handleSubmit,
-        handleInputChange,
     };
 }

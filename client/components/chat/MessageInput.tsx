@@ -2,14 +2,14 @@
 
 import { useRef } from 'react';
 import styles from './MessageInput.module.css';
+import { useMessageInput } from '@/hooks/chat/useMessageInput';
 
 interface MessageInputProps {
-    inputValue: string;
-    handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
-    handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    roomId: string | null;
 }
 
-const MessageInput = function MessageInput({ inputValue, handleSubmit, handleInputChange }: MessageInputProps) {
+const MessageInput = function MessageInput({ roomId }: MessageInputProps) {
+    const { inputValue, handleSubmit, handleInputChange } = useMessageInput({ roomId });
     const formRef = useRef<HTMLFormElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
 

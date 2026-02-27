@@ -20,7 +20,7 @@
 }
 
 .simpleFriendItem:hover {
-  background: #f0f0f0;
+  background: rgb(236, 236, 236);
 }
 
 .simpleFriendName {
@@ -83,39 +83,26 @@
 .messageButton,
 .callButton {
   padding: 0.5rem;
-  /* background: #e4e4e4; */
-  border: none;
   border-radius: 50px;
-  color: var(--modal-accent-color);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow:
-    4px 4px 8px rgba(163, 163, 163, 0.32),
-    -4px -4px 8px rgba(255, 255, 255, 0.44);
+  color: #ff8c62;
 }
 
 .messageButton:hover,
 .callButton:hover {
-  background: #f5f5f5;
-  box-shadow:
-    inset 2px 2px 6px rgba(163, 163, 163, 0.5),
-    inset -2px -2px 6px rgba(255, 255, 255, 0.7);
+  color: #ff7543;
 }
 
 .messageButton svg {
-  width: 25px;
-  height: 25px;
-}
-
-.callButton {
-  /* color: #2563eb; */
-  color: #FF6B35;
+  width: 28px;
+  height: 28px;
 }
 
 .callButton svg {
-  width: 25px;
-  height: 25px;
+  width: 30px;
+  height: 30px;
 }

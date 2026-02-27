@@ -87,6 +87,9 @@ export function useVideoCall({ userId, friendId }: UseVideoCallParams) {
         node.srcObject = remoteStream;
         node.setAttribute("playsinline", "true");
         node.volume = remoteVolume;
+        // srcObject를 동적으로 설정하면 autoPlay가 재트리거되지 않아
+        // 브라우저 자동재생 정책에 의해 오디오가 차단됨 → 명시적으로 play() 호출
+        node.play().catch((e) => console.warn("Remote video play failed:", e));
       }
     },
     [remoteStream, remoteVolume]
@@ -175,6 +178,13 @@ export function useVideoCall({ userId, friendId }: UseVideoCallParams) {
   }, [roomName, myStream, startStream]);
 
   // (srcObject 연결은 위의 Callback Ref에서 자동 처리됨)
+
+  // 컴포넌트 언마운트 시(페이지 이동/닫기) 스트림 정리
+  useEffect(() => {
+    return () => {
+      stopStream();
+    };
+  }, []);
 
   const isJoined = !!myStream;
 
