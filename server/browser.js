@@ -241,7 +241,7 @@ async function createRoomSession(roomName) {
         // 스크린캐스트 시작
         await cdpSession.send('Page.startScreencast', {
             format: 'jpeg',
-            quality: 80,
+            quality: 50, // 기존 80에서 50으로 낮춰서 용량/네트워크 지연시간 대폭 감소
             everyNthFrame: 1, // 모든 프레임 전송
         });
 
