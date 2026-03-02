@@ -27,6 +27,12 @@ export function useLocalStream() {
 
             // Web Audio API로 마이크 볼륨 제어 파이프라인 구성
             const audioContext = new AudioContext();
+
+            // 브라우저의 AudioContext 자동 일시정지 정책 방어
+            if (audioContext.state === "suspended") {
+                audioContext.resume().catch(e => console.warn("AudioContext resume failed:", e));
+            }
+
             const source = audioContext.createMediaStreamSource(mediaStream);
             const gainNode = audioContext.createGain();
             const destination = audioContext.createMediaStreamDestination();
@@ -154,6 +160,12 @@ export function useLocalStream() {
                 }
 
                 const audioContext = new AudioContext();
+
+                // 브라우저의 AudioContext 자동 일시정지 정책 방어
+                if (audioContext.state === "suspended") {
+                    audioContext.resume().catch(e => console.warn("AudioContext resume failed:", e));
+                }
+
                 const source = audioContext.createMediaStreamSource(new MediaStream([newTrack]));
                 const gainNode = audioContext.createGain();
                 const destination = audioContext.createMediaStreamDestination();
