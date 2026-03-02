@@ -7,13 +7,10 @@ export function useLocalStream() {
     const [isAudioEnabled, setIsAudioEnabled] = useState(true);
     const [isVideoEnabled, setIsVideoEnabled] = useState(true);
 
-    // 마이크 볼륨 조절용 Web Audio API
+    // 마이크 볼륨 조절용 Web Audio API (로컬 모니터링 전용 - WebRTC 송출과 분리)
     const [micVolume, setMicVolume] = useState(1); // 0 ~ 1
     const audioContextRef = useRef<AudioContext | null>(null);
     const gainNodeRef = useRef<GainNode | null>(null);
-    const processedStreamRef = useRef<MediaStream | null>(null);
-    // 현재 활성화된 원본 마이크 트랙 (startStream 또는 switchDevice로 획득)
-    const rawAudioTrackRef = useRef<MediaStreamTrack | null>(null);
 
     // 로컬 미디어 스트림 시작
     const startStream = useCallback(async () => {
@@ -25,38 +22,23 @@ export function useLocalStream() {
                 audio: true,
             });
 
-            // Web Audio API로 마이크 볼륨 제어 파이프라인 구성
+            // Web Audio API 파이프라인을 별도로 구성 (로컬 볼륨 모니터링/조절 전용)
+            // 이 파이프라인은 WebRTC 송출에는 사용하지 않음
             const audioContext = new AudioContext();
-
-            // 브라우저의 AudioContext 자동 일시정지 정책 방어
             if (audioContext.state === "suspended") {
                 audioContext.resume().catch(e => console.warn("AudioContext resume failed:", e));
             }
-
             const source = audioContext.createMediaStreamSource(mediaStream);
             const gainNode = audioContext.createGain();
-            const destination = audioContext.createMediaStreamDestination();
-
-            source.connect(gainNode);
-            gainNode.connect(destination);
             gainNode.gain.value = 1;
+            // destination은 연결하지 않음 (로컬 모니터링 전용)
+            source.connect(gainNode);
 
             audioContextRef.current = audioContext;
             gainNodeRef.current = gainNode;
 
-            // 원본 오디오 트랙 저장
-            const audioTrack = mediaStream.getAudioTracks()[0];
-            if (audioTrack) {
-                rawAudioTrackRef.current = audioTrack;
-            }
-
-            // 원본 비디오 트랙 + GainNode를 거친 오디오 트랙으로 새 스트림 생성
-            const processedStream = new MediaStream();
-            mediaStream.getVideoTracks().forEach(track => processedStream.addTrack(track));
-            destination.stream.getAudioTracks().forEach(track => processedStream.addTrack(track));
-
-            processedStreamRef.current = processedStream;
-            setStream(processedStream);
+            // WebRTC에는 원본 스트림(원본 마이크 트랙 포함)을 그대로 사용
+            setStream(mediaStream);
         } catch (e) {
             console.error(e);
             setError(e instanceof Error ? e : new Error("Failed to get media stream"));
@@ -64,7 +46,7 @@ export function useLocalStream() {
         }
     }, [stream]);
 
-    // 마이크 볼륨 변경
+    // 마이크 볼륨 변경 (GainNode 조절)
     const changeMicVolume = useCallback((volume: number) => {
         const clampedVolume = Math.max(0, Math.min(1, volume));
         setMicVolume(clampedVolume);
@@ -82,10 +64,6 @@ export function useLocalStream() {
                 setIsAudioEnabled(audioTrack.enabled);
             }
         }
-        // 원본 마이크 트랙도 같이 토글 (하드웨어 인디케이터 반영용)
-        if (rawAudioTrackRef.current) {
-            rawAudioTrackRef.current.enabled = !rawAudioTrackRef.current.enabled;
-        }
     }, [stream]);
 
     // 비디오 토글
@@ -101,27 +79,14 @@ export function useLocalStream() {
 
     // 스트림 즉시 정리 (통화 종료 시 호출)
     const stopStream = useCallback(() => {
-        // 가공된 스트림 트랙 정리 (비디오 + 가공된 오디오)
-        // ref 기반으로 정리하여 클로저 문제 방지
-        if (processedStreamRef.current) {
-            processedStreamRef.current.getTracks().forEach(track => track.stop());
-            processedStreamRef.current = null;
-        }
-        // state의 stream도 정리 (혹시 다른 참조가 있을 경우 대비)
         if (stream) {
             stream.getTracks().forEach(track => track.stop());
-        }
-        // 원본 마이크 트랙 정리
-        if (rawAudioTrackRef.current) {
-            rawAudioTrackRef.current.stop();
-            rawAudioTrackRef.current = null;
         }
         // AudioContext 닫기
         if (audioContextRef.current && audioContextRef.current.state !== "closed") {
             audioContextRef.current.close();
             audioContextRef.current = null;
         }
-        // GainNode 참조 정리
         gainNodeRef.current = null;
         setStream(null);
     }, [stream]);
@@ -147,51 +112,35 @@ export function useLocalStream() {
                 stream.addTrack(newTrack);
                 newTrack.enabled = isVideoEnabled;
             } else {
-                // 오디오: GainNode 파이프라인 재구성
-
-                // 이전 원본 마이크 트랙 정지
-                if (rawAudioTrackRef.current) {
-                    rawAudioTrackRef.current.stop();
-                }
-
-                // 이전 AudioContext 정리
+                // 오디오: 이전 AudioContext 정리 후 새로 구성
                 if (audioContextRef.current && audioContextRef.current.state !== "closed") {
                     await audioContextRef.current.close();
                 }
 
                 const audioContext = new AudioContext();
-
-                // 브라우저의 AudioContext 자동 일시정지 정책 방어
                 if (audioContext.state === "suspended") {
                     audioContext.resume().catch(e => console.warn("AudioContext resume failed:", e));
                 }
-
                 const source = audioContext.createMediaStreamSource(new MediaStream([newTrack]));
                 const gainNode = audioContext.createGain();
-                const destination = audioContext.createMediaStreamDestination();
-
-                source.connect(gainNode);
-                gainNode.connect(destination);
                 gainNode.gain.value = micVolume;
+                source.connect(gainNode);
 
                 audioContextRef.current = audioContext;
                 gainNodeRef.current = gainNode;
 
-                // 새 원본 마이크 트랙 저장
-                rawAudioTrackRef.current = newTrack;
-
+                // 이전 마이크 트랙 제거 후 새 원본 트랙 직접 추가 (WebRTC에 원본 트랙 전달)
                 const oldAudioTrack = stream.getAudioTracks()[0];
                 if (oldAudioTrack) {
                     oldAudioTrack.stop();
                     stream.removeTrack(oldAudioTrack);
                 }
-                const processedTrack = destination.stream.getAudioTracks()[0];
-                stream.addTrack(processedTrack);
-                processedTrack.enabled = isAudioEnabled;
+                stream.addTrack(newTrack);
+                newTrack.enabled = isAudioEnabled;
             }
 
             // 스트림 갱신 트리거
-            setStream(stream);
+            setStream(new MediaStream(stream.getTracks()));
         } catch (e) {
             console.error("Failed to switch device:", e);
         }
