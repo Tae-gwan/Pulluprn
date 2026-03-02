@@ -1,19 +1,33 @@
 services:
+  # 코브라우징 서버 (Playwright/Chromium) — Oracle Cloud에서만 실행
   server-browser:
     build:
-      context: ./server
-      dockerfile: Dockerfile.browser
+      context: .
+      dockerfile: server/Dockerfile.browser
     container_name: pulluprn-browser
     restart: unless-stopped
     ports:
       - "3003:3003"
     environment:
-      - PORT=3003
-      # 필요하다면 CORS 설정을 위한 클라이언트 URL 추가 (현재 browser.js는 * 허용 상태)
-      # - CORS_ORIGIN=https://www.pulluprn.com
-      # 오라클 리소스 제한 설정 (선택 사항)
+      - NODE_ENV=production
     deploy:
       resources:
         limits:
           cpus: '2.0'
           memory: 4G
+
+  # TURN 서버 (coturn)
+  coturn:
+    image: coturn/coturn:latest
+    container_name: coturn-server
+    restart: always
+    network_mode: "host"
+    command:
+      - -n
+      - --log-file=stdout
+      - --min-port=49152
+      - --max-port=65535
+      - --lt-cred-mech
+      - --realm=pulluprn
+      - "--user=${TURN_USER}:${TURN_PASSWORD}"
+      - "--external-ip=144.24.87.178/10.0.0.198"

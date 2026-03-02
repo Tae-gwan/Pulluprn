@@ -1,4 +1,4 @@
-name: Deploy to EC2
+name: Deploy
 
 on:
   push:
@@ -6,12 +6,15 @@ on:
   workflow_dispatch: # 수동 실행도 가능하도록
 
 jobs:
-  deploy:
-    name: Deploy to EC2 Server
+  # ─────────────────────────────────────────────
+  # 1. EC2 배포 (client, chat, video, db)
+  # ─────────────────────────────────────────────
+  deploy-ec2:
+    name: Deploy to EC2
     runs-on: ubuntu-latest
-    
+
     steps:
-      - name: Deploy to EC2 via SSH
+      - name: SSH into EC2 and deploy
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
@@ -19,54 +22,67 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           port: ${{ secrets.EC2_PORT || 22 }}
           script: |
-            echo "🚀 배포 시작..."
-            
-            # 프로젝트 디렉토리 찾기
+            echo "🚀 EC2 배포 시작..."
+
             PROJECT_PATH="${{ secrets.EC2_PROJECT_PATH }}"
             if [ -z "$PROJECT_PATH" ]; then
-              # 경로가 설정되지 않았으면 자동으로 찾기
-              PROJECT_PATH=$(find ~ -name "pulluprn" -type d 2>/dev/null | head -1)
-              if [ -z "$PROJECT_PATH" ]; then
-                PROJECT_PATH=$(find /home -name "pulluprn" -type d 2>/dev/null | head -1)
-              fi
+              PROJECT_PATH=$(find ~ /home -name "pulluprn" -type d 2>/dev/null | head -1)
             fi
-            
+
             if [ -z "$PROJECT_PATH" ] || [ ! -d "$PROJECT_PATH" ]; then
-              echo "❌ 프로젝트 경로를 찾을 수 없습니다: $PROJECT_PATH"
-              echo "현재 위치: $(pwd)"
-              echo "홈 디렉토리 내용:"
-              ls -la ~
+              echo "❌ 프로젝트 경로를 찾을 수 없습니다"
               exit 1
             fi
-            
-            echo "📁 프로젝트 경로: $PROJECT_PATH"
-            cd "$PROJECT_PATH" || exit 1
-            
-            # Git에서 최신 코드 가져오기
+
+            echo "📁 경로: $PROJECT_PATH"
+            cd "$PROJECT_PATH"
+
             echo "📥 Git pull..."
             git fetch origin
             git reset --hard origin/main
-            git pull origin main
-            
-            # Docker Compose 명령어 확인 (docker compose 또는 docker-compose)
-            if command -v docker &> /dev/null && docker compose version &> /dev/null; then
+
+            if docker compose version &>/dev/null; then
               DOCKER_COMPOSE="docker compose"
-            elif command -v docker-compose &> /dev/null; then
-              DOCKER_COMPOSE="docker-compose"
             else
-              echo "❌ Docker Compose를 찾을 수 없습니다"
-              exit 1
+              DOCKER_COMPOSE="docker-compose"
             fi
-            
-            echo "🔄 Docker Compose 재시작 ($DOCKER_COMPOSE)..."
-            $DOCKER_COMPOSE down
-            $DOCKER_COMPOSE build --no-cache
-            $DOCKER_COMPOSE up -d
-            
-            # 컨테이너 상태 확인
-            echo "✅ 배포 완료! 컨테이너 상태:"
-            $DOCKER_COMPOSE ps
-            
-            # 최근 로그 확인 (에러 체크용)
-            echo "📋 최근 로그:"
-            $DOCKER_COMPOSE logs --tail=50
+
+            echo "🔄 재시작..."
+            $DOCKER_COMPOSE -f docker-compose.ec2.yml down
+            $DOCKER_COMPOSE -f docker-compose.ec2.yml build --no-cache
+            $DOCKER_COMPOSE -f docker-compose.ec2.yml up -d
+
+            echo "✅ EC2 배포 완료!"
+            $DOCKER_COMPOSE -f docker-compose.ec2.yml ps
+
+  # ─────────────────────────────────────────────
+  # 2. Oracle 배포 (server-browser, coturn)
+  # ─────────────────────────────────────────────
+  deploy-oracle:
+    name: Deploy to Oracle Cloud
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: SSH into Oracle and deploy
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.ORACLE_HOST }}
+          username: ${{ secrets.ORACLE_USER }}
+          key: ${{ secrets.ORACLE_SSH_KEY }}
+          port: 22
+          script: |
+            echo "🚀 Oracle 배포 시작..."
+
+            cd ~/pulluprn
+
+            echo "📥 Git pull..."
+            git fetch origin
+            git reset --hard origin/main
+
+            echo "🔄 재시작..."
+            docker compose -f docker-compose.oracle.yml --env-file .env down
+            docker compose -f docker-compose.oracle.yml --env-file .env build --no-cache server-browser
+            docker compose -f docker-compose.oracle.yml --env-file .env up -d
+
+            echo "✅ Oracle 배포 완료!"
+            docker compose -f docker-compose.oracle.yml ps

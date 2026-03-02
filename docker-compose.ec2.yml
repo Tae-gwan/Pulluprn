@@ -17,6 +17,9 @@ services:
         NEXT_PUBLIC_SOCKET_URL: ${NEXT_PUBLIC_SOCKET_URL}
         NEXT_PUBLIC_VIDEO_SOCKET_URL: ${NEXT_PUBLIC_VIDEO_SOCKET_URL}
         NEXT_PUBLIC_BROWSER_SOCKET_URL: ${NEXT_PUBLIC_BROWSER_SOCKET_URL}
+        NEXT_PUBLIC_TURN_HOST: ${NEXT_PUBLIC_TURN_HOST}
+        NEXT_PUBLIC_TURN_USERNAME: ${NEXT_PUBLIC_TURN_USERNAME}
+        NEXT_PUBLIC_TURN_CREDENTIAL: ${NEXT_PUBLIC_TURN_CREDENTIAL}
     container_name: pulluprn-client
     restart: always
     ports:
@@ -35,6 +38,9 @@ services:
       - NEXT_PUBLIC_SOCKET_URL=${NEXT_PUBLIC_SOCKET_URL}
       - NEXT_PUBLIC_VIDEO_SOCKET_URL=${NEXT_PUBLIC_VIDEO_SOCKET_URL}
       - NEXT_PUBLIC_BROWSER_SOCKET_URL=${NEXT_PUBLIC_BROWSER_SOCKET_URL}
+      - NEXT_PUBLIC_TURN_HOST=${NEXT_PUBLIC_TURN_HOST}
+      - NEXT_PUBLIC_TURN_USERNAME=${NEXT_PUBLIC_TURN_USERNAME}
+      - NEXT_PUBLIC_TURN_CREDENTIAL=${NEXT_PUBLIC_TURN_CREDENTIAL}
     logging: *default-logging
     depends_on:
       db:
@@ -79,19 +85,6 @@ services:
     depends_on:
       db:
         condition: service_healthy
-
-  # 4. 백엔드: 브라우저 렌더링 서버 (Playwright)
-  server-browser:
-    build:
-      context: .
-      dockerfile: server/Dockerfile.browser
-    container_name: pulluprn-browser
-    restart: always
-    ports:
-      - "3003:3003"
-    environment:
-      - NODE_ENV=production
-    logging: *default-logging
 
   # 4. 데이터베이스: PostgreSQL
   db:
