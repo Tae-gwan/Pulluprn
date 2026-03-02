@@ -170,8 +170,8 @@ export function useVideoCall({ userId, friendId }: UseVideoCallParams) {
   // 통화 종료 상태 Ref
   const isCallEndedRef = useRef(false);
 
-  // 자동 시작 트리거
-  useEffect(() => {
+  // 수동 시작을 위한 join 함수 노출
+  const joinCall = useCallback(() => {
     if (roomName && !myStream && !isCallEndedRef.current) {
       startStream();
     }
@@ -243,5 +243,6 @@ export function useVideoCall({ userId, friendId }: UseVideoCallParams) {
     // [Fix] Stream 객체 직접 반환 (Layout 변경 시 Re-attachment 재사용을 위해)
     myStream,
     remoteStream,
+    joinCall,
   };
 }

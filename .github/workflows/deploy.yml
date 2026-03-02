@@ -48,8 +48,7 @@ jobs:
             fi
 
             echo "🔄 재시작..."
-            $DOCKER_COMPOSE -f docker-compose.ec2.yml down
-            $DOCKER_COMPOSE -f docker-compose.ec2.yml build --no-cache
+            $DOCKER_COMPOSE -f docker-compose.ec2.yml build
             $DOCKER_COMPOSE -f docker-compose.ec2.yml up -d
 
             echo "✅ EC2 배포 완료!"
@@ -80,8 +79,7 @@ jobs:
             git reset --hard origin/main
 
             echo "🔄 재시작..."
-            docker compose -f docker-compose.oracle.yml --env-file .env down
-            docker compose -f docker-compose.oracle.yml --env-file .env build --no-cache server-browser
+            docker compose -f docker-compose.oracle.yml --env-file .env build server-browser
             docker compose -f docker-compose.oracle.yml --env-file .env up -d
 
             echo "✅ Oracle 배포 완료!"

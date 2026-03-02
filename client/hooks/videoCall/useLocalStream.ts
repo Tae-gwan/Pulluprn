@@ -149,7 +149,7 @@ export function useLocalStream() {
                 }
 
                 // 이전 AudioContext 정리
-                if (audioContextRef.current) {
+                if (audioContextRef.current && audioContextRef.current.state !== "closed") {
                     await audioContextRef.current.close();
                 }
 

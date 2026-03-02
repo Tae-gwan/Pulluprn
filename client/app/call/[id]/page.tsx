@@ -63,6 +63,7 @@ export default function VideoCallWithFriendPage({
     selectedVideoInput,
     handleDeviceChange,
     endCall,
+    joinCall,
   } = useVideoCall({
     userId,
     friendId,
@@ -86,8 +87,10 @@ export default function VideoCallWithFriendPage({
       {/* 메인 콘텐츠 영역 */}
       <div className={styles.videoArea}>
         {!isJoined ? (
-          <div className={styles.loadingBox}>
-            <p className={styles.loadingText}>Preparing the call...</p>
+          <div className={styles.joinBox}>
+            <button className={styles.joinButton} onClick={joinCall}>
+              Join Call
+            </button>
           </div>
         ) : (
           <div className={isBrowserVisible ? styles.browserMode : styles.videoGrid}>
